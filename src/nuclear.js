@@ -4,7 +4,7 @@
     // date conversion utilities
     var convert = {
         E : function (exponent) {
-            return Math.exp(10, exponent);
+            return Math.pow(10, exponent);
         },
         years : function (years) {
             return years;
@@ -20,6 +20,10 @@
         },
         seconds : function (seconds) {
             return ( seconds / (60 * 60 * 24 * 365.25) );
+        },
+
+        moles : function (moles) {
+            return (moles * 6.02214179 * Math.pow(10, 23));
         }
     };
 
@@ -496,7 +500,6 @@
 
     };
 
-
     var nuclear = {
 
         decayProducts : function (isotope) {
@@ -508,10 +511,88 @@
                 }];
             else if (datum && datum.products)
                 return datum.products;
+        },
+
+        decayProfile : function (isotope, startingProfile) {
+
+            var datum = isotopeData[isotope];
+
+            var C = [ [ startingProfile[isotope] ] ];
+            var isotopes = [ isotope ];
+            var halflifes = [ datum.halflife ];
+
+            var lambda = function (halflife) {
+                return ( Math.log(2) / halflife );
+            };
+
+            var decayProduct = this.decayProducts(isotope);
+
+            while (decayProduct) {
+                decayProduct = decayProduct[0];
+                datum = isotopeData[decayProduct.product];
+                if (!datum) break;
+
+                // push on the new halflife
+                isotopes.push(decayProduct.product);
+                halflifes.push(datum.halflife);
+
+                // push zero onto all previous rows
+                for (var i = 0; i < C.length; i++) {
+                    C[i].push(0);
+                }
+
+                // add new row, compute new coefficients
+                C.push( new Array(C[0].length) );
+                i = C.length - 1;
+                var sum = 0;
+                for (var k = 0; k < C[i].length-1; k++) {
+                    C[i][k] = lambda(halflifes[k]) * C[i-1][k] / (lambda(halflifes[i]) - lambda(halflifes[k]));
+                    sum += C[i][k];
+                }
+                var Ni0 = startingProfile[decayProduct.product] || 0;
+                C[i][i] = Ni0 - sum;
+
+                // get next decay product
+                decayProduct = this.decayProducts(decayProduct.product);
+            }
+
+            console.log(halflifes);
+            console.log(C);
+
+            // return function that can evaluate the profile for any time
+            var concentrationProfile = function (years) {
+                var N = {};
+                N.total = 0;
+                for (var i = 0; i < C.length; i++) {
+                    N[isotopes[i]] = 0;
+                    for (var k = 0; k < C[i].length; k++) {
+                        N[isotopes[i]] += C[i][k] * Math.pow(2, -years/halflifes[k]);
+                    }
+                    N[isotopes[i]] = Math.max(0, N[isotopes[i]]);
+                    N.total += N[isotopes[i]];
+                }
+                return N;
+            };
+
+            var radioactivityProfile = function (years) {
+                var Bq = {};
+                Bq.total = 0;
+                for (var i = 0; i < C.length; i++) {
+                    var Ni = 0;
+                    for (var k = 0; k < C[i].length; k++) {
+                        Ni += C[i][k] * Math.pow(2, -years/halflifes[k]);
+                    }
+                    Bq[isotopes[i]] = lambda(halflifes[i]) * Math.max(0, Ni);
+                    Bq.total += convert.moles(Bq[isotopes[i]]) / (365.25 * 24 * 60 * 60);
+                }
+                return Bq;
+            };
+
+            return {
+                concentration : concentrationProfile,
+                radioactivity : radioactivityProfile
+            };
         }
-
-
-        
 
     };
 

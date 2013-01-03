@@ -9,7 +9,6 @@
 
 
     var searchDecayTree = function (isotope, searchIsotope, searchDecayTree) {
-        console.log(isotope);
         var products = nuclear.decayProducts(isotope);
         if (products) {
             for (var i = 0; i < products.length; i++) {
@@ -47,6 +46,22 @@
         expect(Ba135).to.equal('Ba-135');
     });
 
+
+    // Isotopes
+    // --------
+
+    suite('decay chain');
+
+    test('decay chain matrix should be correct', function () {
+        var profile = nuclear.decayProfile('Pu-239', {
+            'Pu-239' : 1
+        });
+
+        for (var tpow = 0; tpow < 20; tpow++) {
+            console.log(Math.pow(10, tpow));
+            console.log(profile.radioactivity(Math.pow(10, tpow)).total);
+        }
+    });
 
 
 })();
