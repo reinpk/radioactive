@@ -3,10 +3,10 @@ nuclear.js
 
 A library to model nuclear physics in javascript, intended for building visualizations and interactive demonstrations.
 
-Use it to model:
+Currently the library can model:
 - decay and radioactivity of nuclear waste
 
-In future it should be possible to add the data and physics required for modeling:
+Soon it would be great to add the data and physics required for modeling:
 - neutron capture
 - fission
 - different varieties of decay radiation (alpha, beta, gamma)
