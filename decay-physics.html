@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Decay physics in nuclear.js</title>
+
+    <link rel="stylesheet" href="styles/styles.css">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+      });
+    </script>
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Decay physics in nuclear.js</h1>
+        <p>The physics behind decay profiles.</p>
+      </header>
+      <section>
+        <h2>One Radioactive Isotope</h2>
+        <p>
+          First we need to calculate the behavior of a single radioactive isotope.
+        </p>
+        <p>
+          Radioactive atoms decay randomly according to their <a href="http://en.wikipedia.org/wiki/Half-life">half-life</a>. The rate of decay for a large number of radioactive atoms is:
+
+          $$ \frac{dN}{dt} = -\lambda N $$
+
+          Which is a differential equation with this solution:
+
+          $$ N(t) = C e^{-\lambda t} $$
+
+          We know that at $ N(0) = N_0 $ and at the half-life $ N(t_{1/2}) = \frac{N_0}{2} $. Using these initial conditions:
+
+          $$ N(0) = C = N_0 $$
+          $$ N(t_{1/2}) = N_0 e^{-\lambda t_{1/2}} = \frac{N_0}{2} $$
+          $$ \lambda = \frac{\ln{2}}{t_{1/2}} $$
+
+          So that we end up with:
+
+          $$ N(t) = N_0 e^{-\lambda t} = N_0 2^{-\frac{t}{t_{1/2}}} $$
+        </p>
+
+        <h2>Decay Chains</h2>
+        <p>
+          But most radioactive isotopes decay into <i>other</i> radioactive isotopes. For example, uranium-235 decays to thorium-231, which decays to protactinium-231, which then goes through <i>eight</i> more decays before finally being transmuted to lead-207, which is a stable isotope. If you want to talk about the radioactivity and composition of radioactive waste you need to model this entire chain of decays.
+        </p>
+        <p>
+          There are four primary <a href="http://en.wikipedia.org/wiki/Decay_chain">decay chains</a>, because radioactive atoms drop in mass by increments of 4 atomic mass units through <a href="http://en.wikipedia.org/wiki/Alpha_decay">alpha decay</a>. They are the Thorium Series, Neptunium Series, Radium Series and Actinium Series -- and the half-life of each isotope in each series must be used to calculate the overall decay profile. This data is included in <a href="https://github.com/reinpk/nuclear.js/blob/master/src/nuclear.js#L32">nuclear.js:isotopeData</a>.
+        </p>
+        <p>
+          Now the math starts getting a little fancy, because the decay of each isotope influences the rate of decay of the next isotope in the chain. The decay rate of the top-level isotope is what we found before:
+
+          $$ \frac{dN_1}{dt} = -\lambda_1 N_1 $$
+
+          And then for the remaining isotopes in the chain:
+
+          $$ \frac{dN_i}{dt} = -\lambda_i N_i - \frac{dN_{i-1}}{dt} $$
+
+          If you expand these equations into their full form you get:
+
+          $$ \frac{dN_i}{dt} = \sum_{k=1}^{i} -\lambda_k C_{ik} e^{-\lambda_k t} $$
+
+          Given this, we make an (educated) guess that the $ N_i $ have the form:
+
+          $$ N_i(t) = \sum_{k=1}^{i} C_{ik} e^{-\lambda_k t} $$
+
+          Plugging this into the differential equation above:
+
+          $$ \sum_{k=1}^{i} -\lambda_k C_{ik} e^{-\lambda_k t} = -\lambda_i \sum_{k=1}^{i} C_{ik} e^{-\lambda_k t} - \sum_{k=1}^{i-1} -\lambda_k C_{i-1 k} e^{-\lambda_k t} $$
+
+          Simplifying this expression quite a bit leads to an interesting result!
+
+          $$ \sum_{k=1}^{i-1} \left[ -\lambda_k C_{ik} e^{-\lambda_k t} + \lambda_i C_{ik} e^{-\lambda_k t} - \lambda_k C_{i-1 k} e^{-\lambda_k t} \right] = 0 $$
+          $$ \sum_{k=1}^{i-1} \left[ -\lambda_k C_{ik} + \lambda_i C_{ik} - \lambda_k C_{i-1 k} \right] e^{-\lambda_k t} = 0 $$
+          $$ -\lambda_k C_{ik} + \lambda_i C_{ik} - \lambda_k C_{i-1 k} = 0 $$
+          $$ C_{ik} = \frac{\lambda_k C_{i-1 k}}{\lambda_i - \lambda_k} $$
+
+          which is true for all $ k < i $, $ i \in [2, n] $.
+
+          and using the initial value $ N_i(t) = N_i(0) $ we see that
+
+          $$ \sum_{k=1}^{i} C_{ik} e^{-\lambda_k \cdot 0} = N_i(0) $$
+          $$ C_{ii} = N_i(0) - \sum_{k=1}^{i-1} C_{ik} $$
+
+          which means we now have a closed form solution for the concentration of any isotope in any decay chain with any set of starting concentrations! Here it is:
+
+          $$ N_i(t) = \sum_{k=1}^{i} C_{ik} e^{-\lambda_k t} $$
+          $$ C_{ik} = \frac{\lambda_k C_{i-1 k}}{\lambda_i - \lambda_k} \text{ for } k < i $$
+          $$ C_{ik} = 0 \text{ for } k > i $$
+          $$ C_{ii} = N_i(0) - \sum_{k=1}^{i-1} C_{ik} $$
+
+          This closed-form solution is used to calculate decay profiles in <a href="https://github.com/reinpk/nuclear.js/blob/master/src/nuclear.js#L516">nuclear.js:decayProfile</a>.
+        </p>
+      </section>
+
+  </body>
+</html>
