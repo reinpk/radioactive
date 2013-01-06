@@ -513,50 +513,62 @@
                 return datum.products;
         },
 
-        decayProfile : function (isotope, startingProfile) {
-
-            var datum = isotopeData[isotope];
-
-            var C = [ [ startingProfile[isotope] ] ];
-            var isotopes = [ isotope ];
-            var halflifes = [ datum.halflife ];
-
-            var lambda = function (halflife) {
-                return ( Math.log(2) / halflife );
-            };
-
+        decayChain : function (isotope) {
+            var chain = [ isotope ];
             var decayProduct = this.decayProducts(isotope);
 
             while (decayProduct) {
+                // choose first decay product
                 decayProduct = decayProduct[0];
-                datum = isotopeData[decayProduct.product];
-                if (!datum) break;
 
-                // push on the new halflife
-                isotopes.push(decayProduct.product);
-                halflifes.push(datum.halflife);
+                // exit if this isotope is stable
+                if (!isotopeData[decayProduct.product]) break;
 
-                // push zero onto all previous rows
-                for (var i = 0; i < C.length; i++) {
-                    C[i].push(0);
-                }
-
-                // add new row, compute new coefficients
-                C.push( new Array(C[0].length) );
-                i = C.length - 1;
-                var sum = 0;
-                for (var k = 0; k < C[i].length-1; k++) {
-                    C[i][k] = lambda(halflifes[k]) * C[i-1][k] / (lambda(halflifes[i]) - lambda(halflifes[k]));
-                    sum += C[i][k];
-                }
-                var Ni0 = startingProfile[decayProduct.product] || 0;
-                C[i][i] = Ni0 - sum;
+                // add this isotope to the chain
+                chain.push(decayProduct.product);
 
                 // get next decay product
                 decayProduct = this.decayProducts(decayProduct.product);
             }
 
-            console.log(halflifes);
+            return chain;
+        },
+
+        decayProfile : function (isotope, startingProfile) {
+
+            var chain = this.decayChain(isotope);
+            var C = new Array(chain.length);
+
+            // calculate lambda coefficients
+            var lambda = _.map(chain, function (isotope) {
+                return ( Math.log(2) / isotopeData[isotope].halflife );
+            });
+            var zeroes = function (length) {
+                return _.map(d3.range(0, length), function () { return 0; });
+            };
+
+            // coefficients for the first row
+            C[0] = zeroes(chain.length);
+            C[0][0] = startingProfile[isotope];
+
+            // coefficients for the remaining rows
+            for (var i = 1; i < chain.length; i++) {
+
+                // initialize array to zeroes
+                C[i] = zeroes(chain.length);
+
+                var sum = 0;
+                for (var k = 0; k < C[i].length-1; k++) {
+                    C[i][k] = lambda[k] * C[i-1][k] / (lambda[i] - lambda[k]);
+                    sum += C[i][k];
+                }
+
+                // the last coefficient (on the diagonal)
+                var Ni0 = startingProfile[chain[i]] || 0;
+                C[i][i] = Ni0 - sum;
+
+            }
+
             console.log(C);
 
             // return function that can evaluate the profile for any time
@@ -566,7 +578,7 @@
                 for (var i = 0; i < C.length; i++) {
                     N[isotopes[i]] = 0;
                     for (var k = 0; k < C[i].length; k++) {
-                        N[isotopes[i]] += C[i][k] * Math.pow(2, -years/halflifes[k]);
+                        N[isotopes[i]] += C[i][k] * Math.exp(-lambda[k] * years);
                     }
                     N[isotopes[i]] = Math.max(0, N[isotopes[i]]);
                     N.total += N[isotopes[i]];
@@ -580,9 +592,9 @@
                 for (var i = 0; i < C.length; i++) {
                     var Ni = 0;
                     for (var k = 0; k < C[i].length; k++) {
-                        Ni += C[i][k] * Math.pow(2, -years/halflifes[k]);
+                        Ni += C[i][k] * Math.exp(-lambda[k] * years);
                     }
-                    Bq[isotopes[i]] = lambda(halflifes[i]) * Math.max(0, Ni);
+                    Bq[isotopes[i]] = lambda[i] * Math.max(0, Ni);
                     Bq.total += convert.moles(Bq[isotopes[i]]) / (365.25 * 24 * 60 * 60);
                 }
                 return Bq;
