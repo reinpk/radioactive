@@ -73,20 +73,20 @@
 
           $$ \frac{dN_i}{dt} = \sum_{k=1}^{i} -\lambda_k C_{ik} e^{-\lambda_k t} $$
 
-          Given this, we make an (educated) guess that the $ N_i $ have the form:
+          Given this, we make an educated guess that the $ N_i $ have the form, due to each isotopes linearly independent decay rates:
 
           $$ N_i(t) = \sum_{k=1}^{i} C_{ik} e^{-\lambda_k t} $$
 
           Plugging this into the differential equation above:
 
-          $$ \sum_{k=1}^{i} -\lambda_k C_{ik} e^{-\lambda_k t} = -\lambda_i \sum_{k=1}^{i} C_{ik} e^{-\lambda_k t} - \sum_{k=1}^{i-1} -\lambda_k C_{i-1 k} e^{-\lambda_k t} $$
+          $$ \sum_{k=1}^{i} -\lambda_k C_{ik} e^{-\lambda_k t} = -\lambda_i \sum_{k=1}^{i} C_{ik} e^{-\lambda_k t} - \sum_{k=1}^{i-1} -\lambda_k C_{(i-1) k} e^{-\lambda_k t} $$
 
           Simplifying this expression quite a bit leads to an interesting result!
 
-          $$ \sum_{k=1}^{i-1} \left[ -\lambda_k C_{ik} e^{-\lambda_k t} + \lambda_i C_{ik} e^{-\lambda_k t} - \lambda_k C_{i-1 k} e^{-\lambda_k t} \right] = 0 $$
-          $$ \sum_{k=1}^{i-1} \left[ -\lambda_k C_{ik} + \lambda_i C_{ik} - \lambda_k C_{i-1 k} \right] e^{-\lambda_k t} = 0 $$
-          $$ -\lambda_k C_{ik} + \lambda_i C_{ik} - \lambda_k C_{i-1 k} = 0 $$
-          $$ C_{ik} = \frac{\lambda_k C_{i-1 k}}{\lambda_i - \lambda_k} $$
+          $$ \sum_{k=1}^{i-1} \left[ -\lambda_k C_{ik} e^{-\lambda_k t} + \lambda_i C_{ik} e^{-\lambda_k t} - \lambda_k C_{(i-1) k} e^{-\lambda_k t} \right] = 0 $$
+          $$ \sum_{k=1}^{i-1} \left[ -\lambda_k C_{ik} + \lambda_i C_{ik} - \lambda_k C_{(i-1) k} \right] e^{-\lambda_k t} = 0 $$
+          $$ -\lambda_k C_{ik} + \lambda_i C_{ik} - \lambda_k C_{(i-1) k} = 0 $$
+          $$ C_{ik} = \frac{\lambda_k C_{(i-1) k}}{\lambda_i - \lambda_k} $$
 
           which is true for all $ k < i $, $ i \in [2, n] $.
 
@@ -98,7 +98,7 @@
           which means we now have a closed form solution for the concentration of any isotope in any decay chain with any set of starting concentrations! Here it is:
 
           $$ N_i(t) = \sum_{k=1}^{i} C_{ik} e^{-\lambda_k t} $$
-          $$ C_{ik} = \frac{\lambda_k C_{i-1 k}}{\lambda_i - \lambda_k} \text{ for } k < i $$
+          $$ C_{ik} = \frac{\lambda_k C_{(i-1) k}}{\lambda_i - \lambda_k} \text{ for } k < i $$
           $$ C_{ik} = 0 \text{ for } k > i $$
           $$ C_{ii} = N_i(0) - \sum_{k=1}^{i-1} C_{ik} $$
 
