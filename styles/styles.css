@@ -279,9 +279,9 @@ footer {
   list-style: none;
   padding: 0;
   left: 0;
-  padding-top: 0px;
+  padding-top: 120px;
   width: 150px;
-  height: 280px;
+  height: 320px;
   border-right: 1px solid #f2f2f2;
 }
 .demo-reactor-list-item, .demo-reactor-list-header {
