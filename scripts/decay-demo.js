@@ -10,6 +10,7 @@ var reactors = [
     {
         name : 'Pressurized Water',
         slug : 'pressurized-water',
+        color : '#CC0000',
         wasteProfile : {
             // units are kg/MTU initial
             'Am-241' : 1.400*E(-1),
@@ -35,6 +36,7 @@ var reactors = [
     {
         name : 'Boiling Water',
         slug : 'boiling-water',
+        color : '#99FF00',
         wasteProfile : {
             // units are kg/MTU initial
             'Am-241' : 6.630*E(-1),
@@ -61,6 +63,7 @@ var reactors = [
     {
         name : 'Heavy Water',
         slug : 'heavy-water',
+        color : '#FFCC00',
         wasteProfile : [],
         wasteAnalysis : '',
         description   : '',
@@ -69,6 +72,7 @@ var reactors = [
     {
         name : 'Liquid Metal',
         slug : 'liquid-metal',
+        color : '#3333FF',
         wasteProfile : [],
         wasteAnalysis : '',
         description   : '',
@@ -77,6 +81,7 @@ var reactors = [
     {
         name : 'Molten Salt',
         slug : 'molten-salt',
+        color : '#993399',
         wasteProfile : [],
         wasteAnalysis : '',
         description   : '',
@@ -85,6 +90,7 @@ var reactors = [
     {
         name : 'Pebble Bed',
         slug : 'pebble-bed',
+        color : '#333333',
         wasteProfile : [],
         wasteAnalysis : '',
         description   : '',
@@ -93,6 +99,7 @@ var reactors = [
     {
         name : 'Aqueous',
         slug : 'aqueous',
+        color : '#FF33FF',
         wasteProfile : [],
         wasteAnalysis : '',
         description   : '',
@@ -114,6 +121,7 @@ DecayDemo.ReactorModel = Backbone.Model.extend({
     defaults : {
         name          : null,
         slug          : null,
+        color         : null,
         wasteProfile  : null,
         wasteAnalysis : null,
         description   : null,
@@ -204,7 +212,7 @@ DecayDemo.ResultsView = Backbone.View.extend({
         var lastTotal = 10;
         while (lastTotal > 1) {
             var t = Math.pow(10, tpow);
-            for (var mult = 1; mult < 10; mult++) {
+            for (var mult = 1; mult < 10; mult+=2) {
                 var profile = decayProfile.radioactivity(mult*t);
                 data.push({
                     t  : mult*t,
@@ -223,21 +231,91 @@ DecayDemo.ResultsView = Backbone.View.extend({
 
         var xScale = d3.scale.linear()
             .domain([0, Math.log(_.last(data).t)])
-            .range([10, 480]);
+            .range([35, 480]);
 
         var yScale = d3.scale.linear()
             .domain([0, Math.log(_.first(data).bq)])
-            .range([190, 5]);
+            .range([150, 5]);
 
         var line = d3.svg.line()
             .x(function (datum) {
-              return xScale(Math.log(datum.t));
+              return Math.floor(xScale(Math.log(datum.t)));
             })
             .y(function (datum) {
-              return yScale(Math.log(datum.bq));
+              return Math.floor(yScale(Math.log(datum.bq)));
+            })
+            .interpolate('cubic');
+
+        svg.append('path')
+            .attr('d', line(data));
+
+        svg.append('rect')
+            .attr('class', 'axis')
+            .attr('x', xScale(0))
+            .attr('y', 0)
+            .attr('width', 1)
+            .attr('height', yScale(0));
+        svg.append('rect')
+            .attr('class', 'axis')
+            .attr('x', xScale(0))
+            .attr('y', yScale(0))
+            .attr('width', 480)
+            .attr('height', 1);
+
+        var tickData = [
+            { y : 10, label : '10 yr' },
+            { y : 1000, label : '1000 yr' },
+            { y : 1000000, label : '1m yr' },
+            { y : 10000000000, label : '10B yr'}
+        ];
+        var ticks = svg.selectAll('rect.tick').data(tickData);
+        ticks.enter().append('rect')
+            .attr('class', 'tick')
+            .attr('x', function (datum) {
+                return Math.round(xScale(Math.log(datum.y)));
+            })
+            .attr('y', yScale(0))
+            .attr('width', 1)
+            .attr('height', 3);
+
+        var tickLabels = svg.selectAll('text.tick-label').data(tickData);
+        tickLabels.enter().append('text')
+            .attr('class', 'tick-label')
+            .attr('x', function (datum) {
+                return xScale(Math.log(datum.y));
+            })
+            .attr('y', yScale(0)+15)
+            .attr('text-anchor', 'middle')
+            .text(function (datum) {
+                return datum.label;
             });
 
-        svg.append('path').attr('d', line(data));
+        var yTickData = [
+            { bq : Math.pow(10, 3), label : '1 KBq' },
+            { bq : Math.pow(10, 9), label : '1 GBq' },
+            { bq : Math.pow(10, 15), label : '1 PBq' }
+        ];
+        var yTicks = svg.selectAll('rect.y-tick').data(yTickData);
+        yTicks.enter().append('rect')
+            .attr('class', 'y-tick')
+            .attr('y', function (datum) {
+                return Math.round(yScale(Math.log(datum.bq)));
+            })
+            .attr('x', xScale(0)-2)
+            .attr('width', 3)
+            .attr('height', 1);
+
+        var yTickLabels = svg.selectAll('text.y-tick-label').data(yTickData);
+        yTickLabels.enter().append('text')
+            .attr('class', 'y-tick-label')
+            .attr('y', function (datum) {
+                return yScale(Math.log(datum.bq))+4;
+            })
+            .attr('x', xScale(0)-5)
+            .attr('text-anchor', 'end')
+            .text(function (datum) {
+                return datum.label;
+            });
     }
 });
 

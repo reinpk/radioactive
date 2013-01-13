@@ -308,23 +308,27 @@ footer {
   min-height: 500px;
   padding-left: 27px;
   font-family: Arial, sans-serif;
+  font-size: 12px;
 }
 
 .demo-results-title {
   padding: 0;
   margin: 0;
   margin-bottom: 20px;
+  font-size: 16px;
 }
 
 
 path {
   stroke: #333;
-  stroke-width: 4px;
+  stroke-width: 2px;
   fill: none;
 }
-
-          <div class="demo-graph">
-            <svg class="demo-graph-svg"></svg>
-          </div>
-          <div class="demo-waste-analysis"></div>
-          <div class="demo-reactor-description">
+rect.axis, rect.tick, rect.y-tick {
+  stroke: none;
+  fill: #CCC;
+}
+text.tick-label, text.y-tick-label {
+  font-size: 10px;
+  fill: #CCC;
+}
