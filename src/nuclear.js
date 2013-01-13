@@ -553,7 +553,7 @@
 
             // coefficients for the first row
             C[0] = zeroes(chain.length);
-            C[0][0] = startingProfile[isotope];
+            C[0][0] = startingProfile[isotope] || 0;
 
             // coefficients for the remaining rows
             for (var i = 1; i < chain.length; i++) {
@@ -572,8 +572,6 @@
                 C[i][i] = Ni0 - sum;
 
             }
-
-            console.log(C);
 
             // return function that can evaluate the profile for any time
             var concentrationProfile = function (years) {

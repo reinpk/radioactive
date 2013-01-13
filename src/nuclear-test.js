@@ -53,7 +53,7 @@
     suite('decay chain');
 
     test('decay chain matrix should be correct', function () {
-        var profile = nuclear.decayChainProfile('Pu-239', {
+        var profile = nuclear.decayProfile({
             'Pu-239' : 1
         });
 
