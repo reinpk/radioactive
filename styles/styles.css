@@ -316,6 +316,13 @@ footer {
   margin-bottom: 20px;
 }
 
+
+path {
+  stroke: #333;
+  stroke-width: 4px;
+  fill: none;
+}
+
           <div class="demo-graph">
             <svg class="demo-graph-svg"></svg>
           </div>

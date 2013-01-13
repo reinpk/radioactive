@@ -198,11 +198,46 @@ DecayDemo.ResultsView = Backbone.View.extend({
     renderGraph : function () {
         var wasteProfile = this.model.get('wasteProfile');
         var decayProfile = nuclear.decayProfile(wasteProfile);
-        for (var pow = 0; pow < 10; pow++) {
-            console.log(decayProfile.radioactivity(Math.exp(10, pow)));
+
+        var data = [];
+        var tpow = 0;
+        var lastTotal = 10;
+        while (lastTotal > 1) {
+            var t = Math.pow(10, tpow);
+            for (var mult = 1; mult < 10; mult++) {
+                var profile = decayProfile.radioactivity(mult*t);
+                data.push({
+                    t  : mult*t,
+                    bq : profile.total
+                });
+            }
+
+            lastTotal = _.last(data).bq;
+            tpow++;
         }
-        // TODO run through nuclear.js
-        // TODO graph it
+        data = _.filter(data, function (datum) {
+            return (Math.log(datum.bq) >= 0);
+        });
+
+        var svg = d3.select('svg');
+
+        var xScale = d3.scale.linear()
+            .domain([0, Math.log(_.last(data).t)])
+            .range([10, 480]);
+
+        var yScale = d3.scale.linear()
+            .domain([0, Math.log(_.first(data).bq)])
+            .range([190, 5]);
+
+        var line = d3.svg.line()
+            .x(function (datum) {
+              return xScale(Math.log(datum.t));
+            })
+            .y(function (datum) {
+              return yScale(Math.log(datum.bq));
+            });
+
+        svg.append('path').attr('d', line(data));
     }
 });
 
