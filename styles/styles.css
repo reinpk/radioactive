@@ -20,7 +20,7 @@ h1, h2, h3 {
 
 h1 {
   font-size:1.5em;
-  margin-bottom:17px;
+  margin-bottom:7px;
 }
 
 h2 {
@@ -183,6 +183,10 @@ hr {
   margin:0 0 20px;
 }
 
+header p {
+  font-size: 18px;
+}
+
 
 
 @media print, screen and (max-width: 960px) {}
@@ -252,3 +256,64 @@ footer {
   font-size: 12px;
   color: #999;
 }
+
+
+
+
+/** Demo **/
+
+.demo-container {
+  position: relative;
+  top: 10px;
+  left: 0px;
+  width: 100%;
+  min-height: 600px;
+}
+
+.demo-reactor-list {
+  position: absolute;
+  list-style: none;
+  padding: 0;
+  left: 0;
+  padding-top: 70px;
+  width: 120px;
+  height: 280px;
+  border-right: 1px solid #f2f2f2;
+}
+.demo-reactor-list-item, .demo-reactor-list-header {
+  padding: 4px;
+  padding-left: 10px;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+}
+.demo-reactor-list-header {
+  color: #DDD;
+  padding-left: 0px;
+}
+.demo-reactor-list-item.selected a {
+  text-decoration: none;
+  color: #333;
+}
+
+
+.demo-results {
+  position: absolute;
+  left: 120px;
+  top: 0;
+  right: 0;
+  min-height: 500px;
+  padding-left: 27px;
+  font-family: Arial, sans-serif;
+}
+
+.demo-results-title {
+  padding: 0;
+  margin: 0;
+  margin-bottom: 20px;
+}
+
+          <div class="demo-graph">
+            <svg class="demo-graph-svg"></svg>
+          </div>
+          <div class="demo-waste-analysis"></div>
+          <div class="demo-reactor-description">
