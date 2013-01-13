@@ -60,8 +60,7 @@
         console.log(profile);
 
         for (var tpow = 0; tpow < 20; tpow++) {
-            console.log(Math.pow(10, tpow));
-            console.log(profile.radioactivity(Math.pow(10, tpow)).total);
+            console.log(profile.radioactivity(Math.pow(10, tpow)));
         }
     });
 
