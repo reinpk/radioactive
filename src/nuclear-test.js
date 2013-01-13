@@ -2,10 +2,10 @@
 (function () {
 
 
-    // Isotopes
-    // --------
+    // Decay Chains
+    // ------------
 
-    suite('isotopes');
+    suite('decay chains');
 
 
     var searchDecayTree = function (isotope, searchIsotope, searchDecayTree) {
@@ -28,8 +28,8 @@
         var Pb207 = searchDecayTree('Pu-239', 'Pb-207', searchDecayTree);
         expect(Pb207).to.equal('Pb-207');
     });
-    test('radium series should be complete from U-238 to Pb-206', function () {
-        var Pb206 = searchDecayTree('U-238', 'Pb-206', searchDecayTree);
+    test('radium series should be complete from Pu-242 to Pb-206', function () {
+        var Pb206 = searchDecayTree('Pu-242', 'Pb-206', searchDecayTree);
         expect(Pb206).to.equal('Pb-206');
     });
     test('neptunium series should be complete from Cf-249 to Tl-205', function () {
@@ -47,12 +47,12 @@
     });
 
 
-    // Isotopes
-    // --------
+    // Decay Profiles
+    // --------------
 
-    suite('decay chain');
+    suite('decay profiles');
 
-    test('decay chain matrix should be correct', function () {
+    test('decay profile should be correct', function () {
         var profile = nuclear.decayProfile({
             'Pu-239' : 1
         });
