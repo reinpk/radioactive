@@ -262,6 +262,10 @@ footer {
 
 /** Demo **/
 
+.demo {
+  font-family: Arial, sans-serif;
+}
+
 .demo-container {
   position: relative;
   top: 10px;
@@ -275,8 +279,8 @@ footer {
   list-style: none;
   padding: 0;
   left: 0;
-  padding-top: 70px;
-  width: 120px;
+  padding-top: 0px;
+  width: 150px;
   height: 280px;
   border-right: 1px solid #f2f2f2;
 }
@@ -287,7 +291,7 @@ footer {
   font-family: Arial, sans-serif;
 }
 .demo-reactor-list-header {
-  color: #DDD;
+  color: #BBB;
   padding-left: 0px;
 }
 .demo-reactor-list-item.selected a {
@@ -298,7 +302,7 @@ footer {
 
 .demo-results {
   position: absolute;
-  left: 120px;
+  left: 150px;
   top: 0;
   right: 0;
   min-height: 500px;
