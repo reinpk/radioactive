@@ -591,7 +591,7 @@
             return chain;
         },
 
-        decayChainProfile : function (isotope, startingProfile) {
+        decayChainProfile : function (isotope, charge) {
 
             var chain = this.decayChain(isotope);
             var C = new Array(chain.length);
@@ -606,7 +606,8 @@
 
             // coefficients for the first row
             C[0] = zeroes(chain.length);
-            C[0][0] = startingProfile[isotope] || 0;
+            C[0][0] = charge[isotope] || 0;
+            charge[isotope] = 0;
 
             // coefficients for the remaining rows
             for (var i = 1; i < chain.length; i++) {
@@ -621,9 +622,9 @@
                 }
 
                 // the last coefficient (on the diagonal)
-                var Ni0 = startingProfile[chain[i]] || 0;
+                var Ni0 = charge[chain[i]] || 0;
                 C[i][i] = Ni0 - sum;
-
+                charge[chain[i]] = 0;
             }
 
             // return function that can evaluate the profile for any time
@@ -663,18 +664,19 @@
 
         decayProfile : function (startingProfile) {
 
-            var series = ['Cf-252', 'Cf-249', 'Pu-242', 'Pu-239', 'Cs-137', 'Cs-134', 'Eu-154'];
+            var charge = _.clone(startingProfile);
+            var isotopesAtStart = _.keys(charge);
 
             var self = this;
-            var seriesProfiles = _.map(series, function (serie) {
-                return self.decayChainProfile(serie, startingProfile);
+            var profiles = _.map(isotopesAtStart, function (isotope) {
+                return self.decayChainProfile(isotope, charge);
             });
 
             // Merge the concentrations from each series
             var concentrationProfile = function (years) {
                 var concentration = {};
-                for (var i = 0; i < seriesProfiles.length; i++) {
-                    var seriesConcentration = seriesProfiles[i].concentration(years);
+                for (var i = 0; i < profiles.length; i++) {
+                    var seriesConcentration = profiles[i].concentration(years);
                     concentration = _.defaults(concentration, seriesConcentration);
                     concentration.total += seriesConcentration.total;
                 }
@@ -684,8 +686,8 @@
             // Merge the radioactivity from each series
             var radioactivityProfile = function (years) {
                 var Bq = {};
-                for (var i = 0; i < seriesProfiles.length; i++) {
-                    var seriesBq = seriesProfiles[i].radioactivity(years);
+                for (var i = 0; i < profiles.length; i++) {
+                    var seriesBq = profiles[i].radioactivity(years);
                     Bq = _.defaults(Bq, seriesBq);
                     Bq.total += seriesBq.total;
                 }
