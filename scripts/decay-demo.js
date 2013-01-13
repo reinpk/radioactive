@@ -197,7 +197,10 @@ DecayDemo.ResultsView = Backbone.View.extend({
 
     renderGraph : function () {
         var wasteProfile = this.model.get('wasteProfile');
-        
+        var decayProfile = nuclear.decayProfile(wasteProfile);
+        for (var pow = 0; pow < 10; pow++) {
+            console.log(decayProfile.radioactivity(Math.exp(10, pow)));
+        }
         // TODO run through nuclear.js
         // TODO graph it
     }
