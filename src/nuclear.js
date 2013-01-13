@@ -200,6 +200,10 @@
 
         // Radium series (aka uranium series)
 
+        'Pu-242' : {
+            halflife : convert.years(376) * convert.E(3),
+            product  : 'U-238'
+        },
         'U-238' : {
             halflife : convert.years(4.468) * convert.E(9),
             product  : 'Th-234'
@@ -534,7 +538,7 @@
             return chain;
         },
 
-        decayProfile : function (isotope, startingProfile) {
+        decayChainProfile : function (isotope, startingProfile) {
 
             var chain = this.decayChain(isotope);
             var C = new Array(chain.length);
@@ -544,7 +548,7 @@
                 return ( Math.log(2) / isotopeData[isotope].halflife );
             });
             var zeroes = function (length) {
-                return _.map(d3.range(0, length), function () { return 0; });
+                return _.map(_.range(length), function () { return 0; });
             };
 
             // coefficients for the first row
@@ -558,7 +562,7 @@
                 C[i] = zeroes(chain.length);
 
                 var sum = 0;
-                for (var k = 0; k < C[i].length-1; k++) {
+                for (var k = 0; k < i; k++) {
                     C[i][k] = lambda[k] * C[i-1][k] / (lambda[i] - lambda[k]);
                     sum += C[i][k];
                 }
@@ -576,12 +580,12 @@
                 var N = {};
                 N.total = 0;
                 for (var i = 0; i < C.length; i++) {
-                    N[isotopes[i]] = 0;
+                    N[chain[i]] = 0;
                     for (var k = 0; k < C[i].length; k++) {
-                        N[isotopes[i]] += C[i][k] * Math.exp(-lambda[k] * years);
+                        N[chain[i]] += C[i][k] * Math.exp(-lambda[k] * years);
                     }
-                    N[isotopes[i]] = Math.max(0, N[isotopes[i]]);
-                    N.total += N[isotopes[i]];
+                    N[chain[i]] = Math.max(0, N[chain[i]]);
+                    N.total += N[chain[i]];
                 }
                 return N;
             };
@@ -594,8 +598,45 @@
                     for (var k = 0; k < C[i].length; k++) {
                         Ni += C[i][k] * Math.exp(-lambda[k] * years);
                     }
-                    Bq[isotopes[i]] = lambda[i] * Math.max(0, Ni);
-                    Bq.total += convert.moles(Bq[isotopes[i]]) / (365.25 * 24 * 60 * 60);
+                    Bq[chain[i]] = lambda[i] * Math.max(0, Ni);
+                    Bq.total += convert.moles(Bq[chain[i]]) / (365.25 * 24 * 60 * 60);
+                }
+                return Bq;
+            };
+
+            return {
+                concentration : concentrationProfile,
+                radioactivity : radioactivityProfile
+            };
+        },
+
+        decayProfile : function (startingProfile) {
+
+            var seriesProfiles = [
+                this.decayChainProfile('Cf-252', startingProfile), // Thorium
+                this.decayChainProfile('Cf-249', startingProfile), // Neptunium
+                this.decayChainProfile('Pu-242', startingProfile), // Uranium
+                this.decayChainProfile('Pu-239', startingProfile)  // Actinium
+            ];
+
+            // Merge the concentrations from each series
+            var concentrationProfile = function (years) {
+                var concentration = {};
+                for (var i = 0; i < seriesProfiles.length; i++) {
+                    var seriesConcentration = seriesProfiles[i].concentration(years);
+                    concentration = _.defaults(concentration, seriesConcentration);
+                    concentration.total += seriesConcentration.total;
+                }
+                return concentration;
+            };
+
+            // Merge the radioactivity from each series
+            var radioactivityProfile = function (years) {
+                var Bq = {};
+                for (var i = 0; i < seriesProfiles.length; i++) {
+                    var seriesBq = seriesProfiles[i].radioactivity(years);
+                    Bq = _.defaults(Bq, seriesBq);
+                    Bq.total += seriesBq.total;
                 }
                 return Bq;
             };
