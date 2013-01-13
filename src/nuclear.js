@@ -650,8 +650,8 @@
                     for (var k = 0; k < C[i].length; k++) {
                         Ni += C[i][k] * Math.exp(-lambda[k] * years);
                     }
-                    Bq[chain[i]] = lambda[i] * Math.max(0, Ni);
-                    Bq.total += convert.moles(Bq[chain[i]]) / (365.25 * 24 * 60 * 60);
+                    Bq[chain[i]] = convert.moles(lambda[i] * Math.max(0, Ni)) / (365.25 * 24 * 60 * 60);
+                    Bq.total += Bq[chain[i]];
                 }
                 return Bq;
             };
