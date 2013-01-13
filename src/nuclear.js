@@ -41,6 +41,10 @@
             halflife : convert.years(3.4) * convert.E(5),
             product  : 'Pu-244'
         },
+        'Cm-244' : {
+            halflife : convert.years(18.1),
+            product  : 'Pu-240'
+        },
         'Pu-244' : {
             halflife : convert.years(8) * convert.E(7),
             product  : 'U-240'
@@ -57,9 +61,17 @@
             halflife : convert.years(6561),
             product  : 'U-236'
         },
+        'Pu-236' : {
+            halflife : convert.years(2.858),
+            product  : 'U-232'
+        },
         'U-236' : {
             halflife : convert.years(2.3) * convert.E(7),
             product  : 'Th-232'
+        },
+        'U-232' : {
+            halflife : convert.years(68.9),
+            product  : 'Th-228'
         },
         'Th-232' : {
             halflife : convert.years(1.405) * convert.E(10),
@@ -200,9 +212,17 @@
 
         // Radium series (aka uranium series)
 
+        'Cm-242' : {
+            halflife : convert.days(162.8),
+            product  : 'Pu-238'
+        },
         'Pu-242' : {
             halflife : convert.years(376) * convert.E(3),
             product  : 'U-238'
+        },
+        'Pu-238' : {
+            halflife : convert.years(87.7),
+            product  : 'U-234'
         },
         'U-238' : {
             halflife : convert.years(4.468) * convert.E(9),
@@ -446,6 +466,33 @@
 
         // Fission products
 
+        // strontium-90
+        'Sr-90' : {
+            halflife : convert.years(28.8),
+            product  : 'Y-90'
+        },
+        'Y-90' : {
+            halflife : convert.hours(64),
+            product  : 'Zr-90'
+        },
+
+        // cesium-134
+        'Cs-134' : {
+            halflife : convert.years(2.0652),
+            product  : 'Ba-134'
+        },
+
+        // cesium-137
+        'Cs-137' : {
+            halflife : convert.years(30.17),
+            product  : 'Ba-137m'
+        },
+        'Ba-137m' : {
+            halflife : convert.seconds(153),
+            product  : 'Ba-137'
+        },
+
+
         // light
         'Y-99' : {
             halflife : convert.seconds(1.470),
@@ -500,6 +547,12 @@
         'Cs-135' : {
             halflife : convert.years(2.3) * convert.E(6),
             product  : 'Ba-135'
+        },
+
+        // europium 154
+        'Eu-154' : {
+            halflife : convert.years(8.593),
+            product  : 'Gd-154'
         }
 
     };
@@ -578,11 +631,11 @@
                 var N = {};
                 N.total = 0;
                 for (var i = 0; i < C.length; i++) {
-                    N[chain[i]] = 0;
+                    var Ni = 0;
                     for (var k = 0; k < C[i].length; k++) {
-                        N[chain[i]] += C[i][k] * Math.exp(-lambda[k] * years);
+                        Ni += C[i][k] * Math.exp(-lambda[k] * years);
                     }
-                    N[chain[i]] = Math.max(0, N[chain[i]]);
+                    N[chain[i]] = Math.max(0, Ni);
                     N.total += N[chain[i]];
                 }
                 return N;
@@ -610,12 +663,12 @@
 
         decayProfile : function (startingProfile) {
 
-            var seriesProfiles = [
-                this.decayChainProfile('Cf-252', startingProfile), // Thorium
-                this.decayChainProfile('Cf-249', startingProfile), // Neptunium
-                this.decayChainProfile('Pu-242', startingProfile), // Uranium
-                this.decayChainProfile('Pu-239', startingProfile)  // Actinium
-            ];
+            var series = ['Cf-252', 'Cf-249', 'Pu-242', 'Pu-239', 'Cs-137', 'Cs-134', 'Eu-154'];
+
+            var self = this;
+            var seriesProfiles = _.map(series, function (serie) {
+                return self.decayChainProfile(serie, startingProfile);
+            });
 
             // Merge the concentrations from each series
             var concentrationProfile = function (years) {
