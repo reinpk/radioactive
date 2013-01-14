@@ -667,6 +667,8 @@
             var charge = _.clone(startingProfile);
             var isotopesAtStart = _.keys(charge);
 
+            console.log(isotopesAtStart);
+
             var self = this;
             var profiles = _.map(isotopesAtStart, function (isotope) {
                 return self.decayChainProfile(isotope, charge);
@@ -674,7 +676,7 @@
 
             // Merge the concentrations from each series
             var concentrationProfile = function (years) {
-                var concentration = {};
+                var concentration = { total : 0 };
                 for (var i = 0; i < profiles.length; i++) {
                     var seriesConcentration = profiles[i].concentration(years);
                     concentration = _.defaults(concentration, seriesConcentration);
@@ -685,7 +687,7 @@
 
             // Merge the radioactivity from each series
             var radioactivityProfile = function (years) {
-                var Bq = {};
+                var Bq = { total : 0};
                 for (var i = 0; i < profiles.length; i++) {
                     var seriesBq = profiles[i].radioactivity(years);
                     Bq = _.defaults(Bq, seriesBq);
