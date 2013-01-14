@@ -13,20 +13,20 @@ var reactors = [
         color : '#CC0000',
         wasteProfile : {
             // units are kg/MTU initial
-            'Am-241' : 1.400*E(-1),
-            'Cm-242' : 1.190*E(-2),
-            'Cm-244' : 1.650*E(-2),
-            'Cs-134' : 9.540*E(-2),
-            'Cs-137' : 1.000*E(0),
-            'Eu-154' : 1.970*E(-2),
-            'Pu-238' : 1.060*E(-1),
-            'Pu-239' : 5.080*E(0),
-            'Pu-240' : 2.040*E(0),
-            'Pu-241' : 1.110*E(0),
-            'Pu-242' : 3.660*E(-1),
-            'U-235'  : 1.010*E(1),
-            'U-236'  : 4.050*E(0),
-            'U-238'  : 9.480*E(2)
+            'Am-241' : 1.400*E(-1) * 15 / 1.344,
+            'Cm-242' : 1.190*E(-2) * 15 / 1.344,
+            'Cm-244' : 1.650*E(-2) * 15 / 1.344,
+            'Cs-134' : 9.540*E(-2) * 15 / 1.344,
+            'Cs-137' : 1.000*E(0) * 15 / 1.344,
+            'Eu-154' : 1.970*E(-2) * 15 / 1.344,
+            'Pu-238' : 1.060*E(-1) * 15 / 1.344,
+            'Pu-239' : 5.080*E(0) * 15 / 1.344,
+            'Pu-240' : 2.040*E(0) * 15 / 1.344,
+            'Pu-241' : 1.110*E(0) * 15 / 1.344,
+            'Pu-242' : 3.660*E(-1) * 15 / 1.344,
+            'U-235'  : 1.010*E(1) * 15 / 1.344,
+            'U-236'  : 4.050*E(0) * 15 / 1.344,
+            'U-238'  : 9.480*E(2) * 15 / 1.344
         },
         wasteDataSource : 'http://www.oecd-nea.org/sfcompo/Ver.2/search/search.pl?rosin=Obrigheim&cell=BE124&pin=G7&axis=2315',
         wasteAnalysis : '',
@@ -38,22 +38,23 @@ var reactors = [
         slug : 'boiling-water',
         color : '#99FF00',
         wasteProfile : {
-            // units are kg/MTU initial
-            'Am-241' : 6.630*E(-1),
-            'Cm-242' : 1.460*E(-2),
-            'Cm-244' : 1.980*E(-2),
-            'Cs-134' : 6.580*E(-2),
-            'Cs-137' : 8.630*E(-1),
-            'Eu-154' : 1.770*E(-2),
-            'Pu-236' : 1.550*E(-6),
-            'Pu-238' : 1.080*E(-1),
-            'Pu-239' : 4.800*E(0),
-            'Pu-240' : 2.170*E(0),
-            'Pu-241' : 1.140*E(0),
-            'Pu-242' : 4.500*E(-1),
-            'U-235'  : 6.500*E(0),
-            'U-236'  : 3.260*E(0),
-            'U-238'  : 9.520*E(2)
+            // units are kg/MTU initial * 15 tons/year / 1.344 GWe
+            // so end units are kg/year/GWe
+            'Am-241' : 6.630*E(-1) * 15 / 1.344,
+            'Cm-242' : 1.460*E(-2) * 15 / 1.344,
+            'Cm-244' : 1.980*E(-2) * 15 / 1.344,
+            'Cs-134' : 6.580*E(-2) * 15 / 1.344,
+            'Cs-137' : 8.630*E(-1) * 15 / 1.344,
+            'Eu-154' : 1.770*E(-2) * 15 / 1.344,
+            'Pu-236' : 1.550*E(-6) * 15 / 1.344,
+            'Pu-238' : 1.080*E(-1) * 15 / 1.344,
+            'Pu-239' : 4.800*E(0) * 15 / 1.344,
+            'Pu-240' : 2.170*E(0) * 15 / 1.344,
+            'Pu-241' : 1.140*E(0) * 15 / 1.344,
+            'Pu-242' : 4.500*E(-1) * 15 / 1.344,
+            'U-235'  : 6.500*E(0) * 15 / 1.344,
+            'U-236'  : 3.260*E(0) * 15 / 1.344,
+            'U-238'  : 9.520*E(2) * 15 / 1.344
         },
         wasteDataSource : 'http://www.oecd-nea.org/sfcompo/Ver.2/search/search.pl?rosin=Gundremmingen&cell=B23&pin=A1&axis=2680',
         wasteAnalysis : '',
@@ -71,51 +72,11 @@ var reactors = [
         diagram       : ''
     },
     {
-        name : 'Liquid Metal',
-        slug : 'liquid-metal',
-        color : '#3333FF',
-        wasteProfile : [],
-        wasteAnalysis : '',
-        description   : '',
-        diagram       : ''
-    },
-    {
         name : 'Molten Salt',
         slug : 'molten-salt',
         color : '#993399',
         wasteProfile : [],
         wasteDataSource : 'http://www.ornl.gov/~webworks/cppr/y2001/pres/118013.pdf',
-        wasteAnalysis : '',
-        description   : '',
-        diagram       : ''
-    },
-    {
-        name : 'Pebble Bed',
-        slug : 'pebble-bed',
-        color : '#333333',
-        wasteProfile : [],
-        wasteAnalysis : '',
-        description   : '',
-        diagram       : ''
-    },
-    {
-        name : 'Thermal',
-        slug : 'thermal',
-        color : '#333333',
-        wasteProfile : {
-            // units are kg/year/GWe
-            'Pu-238' : 2.8,
-            'Pu-239' : 121.7,
-            'Pu-240' : 53.2,
-            'Pu-241' : 27.5,
-            'Pu-242' : 12.8,
-            'Np-237' : 7.1,
-            'Am-241' : 6.4,
-            'Am-242' : 0.006,
-            'Am-243' : 2.6,
-            'Cm-244' : 1
-        },
-        wasteDataSource : 'http://www.nap.edu/openbook.php?record_id=11320&page=62',
         wasteAnalysis : '',
         description   : '',
         diagram       : ''
