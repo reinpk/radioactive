@@ -65,6 +65,7 @@ var reactors = [
         slug : 'heavy-water',
         color : '#FFCC00',
         wasteProfile : [],
+        wasteDataSource : 'https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=3&ved=0CDoQFjAC&url=http%3A%2F%2Fwww.scirp.org%2Fjournal%2FPaperDownload.aspx%3FDOI%3D10.4236%2Fwjnst.2011.12006&ei=_m3zUODYH-OXiAKqkYG4CQ&usg=AFQjCNEevchP7rDdn-83oQXxqBkRz6YHEA',
         wasteAnalysis : '',
         description   : '',
         diagram       : ''
@@ -83,6 +84,7 @@ var reactors = [
         slug : 'molten-salt',
         color : '#993399',
         wasteProfile : [],
+        wasteDataSource : 'http://www.ornl.gov/~webworks/cppr/y2001/pres/118013.pdf',
         wasteAnalysis : '',
         description   : '',
         diagram       : ''
@@ -97,10 +99,23 @@ var reactors = [
         diagram       : ''
     },
     {
-        name : 'Aqueous',
-        slug : 'aqueous',
-        color : '#FF33FF',
-        wasteProfile : [],
+        name : 'Thermal',
+        slug : 'thermal',
+        color : '#333333',
+        wasteProfile : {
+            // units are kg/year/GWe
+            'Pu-238' : 2.8,
+            'Pu-239' : 121.7,
+            'Pu-240' : 53.2,
+            'Pu-241' : 27.5,
+            'Pu-242' : 12.8,
+            'Np-237' : 7.1,
+            'Am-241' : 6.4,
+            'Am-242' : 0.006,
+            'Am-243' : 2.6,
+            'Cm-244' : 1
+        },
+        wasteDataSource : 'http://www.nap.edu/openbook.php?record_id=11320&page=62',
         wasteAnalysis : '',
         description   : '',
         diagram       : ''
