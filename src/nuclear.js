@@ -211,7 +211,10 @@
 
 
         // Radium series (aka uranium series)
-
+        'Am-242' : {
+            halflife : convert.hours(16.02),
+            product  : 'Cm-242'
+        },
         'Cm-242' : {
             halflife : convert.days(162.8),
             product  : 'Pu-238'
@@ -349,6 +352,14 @@
 
         // Actinium series
 
+        'Am-243' : {
+            halflife : convert.years(7370),
+            product  : 'Np-239'
+        },
+        'Np-239' : {
+            halflife : convert.days(2.356),
+            product  : 'Pu-239'
+        },
         'Pu-239' : {
             halflife : convert.years(2.41) * convert.E(4),
             product  : 'U-235'
