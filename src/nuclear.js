@@ -687,7 +687,7 @@
 
             // Merge the radioactivity from each series
             var radioactivityProfile = function (years) {
-                var Bq = { total : 0};
+                var Bq = { total : 0 };
                 for (var i = 0; i < profiles.length; i++) {
                     var seriesBq = profiles[i].radioactivity(years);
                     Bq = _.defaults(Bq, seriesBq);
