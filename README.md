@@ -1,5 +1,5 @@
-nuclear.js
-============
+radioactive.js
+===============
 
 A library to model nuclear physics in javascript, intended for building visualizations and interactive demonstrations.
 
