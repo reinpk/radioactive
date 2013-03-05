@@ -6,7 +6,7 @@ A library to model nuclear physics in javascript, intended for building visualiz
 Currently the library can model:
 - decay and radioactivity of nuclear waste
 
-Soon it would be great to add the data and physics required for modeling:
+It would be cool to add the data and physics required for modeling:
 - neutron capture
 - fission
 - different varieties of decay radiation (alpha, beta, gamma)
