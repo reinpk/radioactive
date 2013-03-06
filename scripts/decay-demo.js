@@ -62,10 +62,18 @@ var reactors = [
         wasteDataSource : 'https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=3&ved=0CDoQFjAC&url=http%3A%2F%2Fwww.scirp.org%2Fjournal%2FPaperDownload.aspx%3FDOI%3D10.4236%2Fwjnst.2011.12006&ei=_m3zUODYH-OXiAKqkYG4CQ&usg=AFQjCNEevchP7rDdn-83oQXxqBkRz6YHEA'
     },
     {
-        name : 'Molten Salt',
+        name : 'Hypothetical Actinide Burner',
         slug : 'molten-salt',
         color : '#993399',
-        wasteProfile : [],
+        wasteProfile : {
+            // units are kg/MTU initial
+            'Cs-134' : 9.540*E(-2) * 15 / 1.344,
+            'Cs-137' : 1.000*E(0) * 15 / 1.344,
+            'Eu-154' : 1.970*E(-2) * 15 / 1.344,
+            'U-235'  : 1.010*E(0) * 15 / 1.344,
+            'U-236'  : 4.050*E(0) * 15 / 1.344,
+            'U-238'  : 9.480*E(2) * 15 / 1.344
+        },
         wasteDataSource : 'http://www.ornl.gov/~webworks/cppr/y2001/pres/118013.pdf'
     }
 ];
@@ -100,6 +108,8 @@ DecayDemo.ResultsView = Backbone.View.extend({
 
     initialize : function (options) {
         this.onReactorSelected(options.collection.first());
+        this.onReactorSelected(options.collection.at(1));
+        this.onReactorSelected(options.collection.last());
     },
 
     onReactorSelected : function (reactorModel) {
