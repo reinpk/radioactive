@@ -233,9 +233,9 @@ path {
 }
 rect.axis, rect.tick, rect.y-tick {
   stroke: none;
-  fill: #CCC;
+  fill: #89867b;
 }
 text.tick-label, text.y-tick-label {
   font-size: 10px;
-  fill: #CCC;
+  fill: #89867b;
 }
