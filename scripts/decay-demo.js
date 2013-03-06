@@ -160,13 +160,17 @@ DecayDemo.ResultsView = Backbone.View.extend({
     },
 
     renderGraph : function () {
+
+        var backgroundSoilRadiation = 130600000;
+        var backgroundCutoff = backgroundSoilRadiation / 500;
+
         var wasteProfile = this.model.get('wasteProfile');
         var decayProfile = nuclear.decayProfile(wasteProfile);
 
         var data = [];
         var tpow = 0;
-        var lastTotal = 10;
-        while (lastTotal > 1) {
+        var lastTotal = backgroundCutoff * 2;
+        while (lastTotal > backgroundCutoff) {
             var t = Math.pow(10, tpow);
             for (var mult = 1; mult < 10; mult+=2) {
                 var profile = decayProfile.radioactivity(mult*t);
@@ -180,7 +184,7 @@ DecayDemo.ResultsView = Backbone.View.extend({
             tpow++;
         }
         data = _.filter(data, function (datum) {
-            return (Math.log(datum.bq) >= 0);
+            return (datum.bq >= backgroundCutoff);
         });
 
         var svg = d3.select('svg');
@@ -190,7 +194,7 @@ DecayDemo.ResultsView = Backbone.View.extend({
             .range([35, 580]);
 
         var yScale = d3.scale.linear()
-            .domain([0, 40])
+            .domain([Math.log(backgroundCutoff), 40])
             .range([250, 5]);
 
         var line = d3.svg.line()
@@ -206,16 +210,32 @@ DecayDemo.ResultsView = Backbone.View.extend({
             .attr('d', line(data))
             .style('stroke', this.model.get('color'));
 
+        // Calculated from http://www.physics.isu.edu/radinf/natural.htm
+        // by using an equivalent mass of soil as the input waste mass.
+        var soilbackgroundLine = d3.svg.line()
+            .x(function (datum) {
+              return Math.floor(xScale(Math.log(datum.t)));
+            })
+            .y(function (datum) {
+              return Math.floor(yScale(Math.log(backgroundSoilRadiation)));
+            })
+            .interpolate('cubic');
+
+
+        svg.append('path')
+            .attr('class', 'soil-background')
+            .attr('d', soilbackgroundLine(data));
+
         svg.append('rect')
             .attr('class', 'axis')
             .attr('x', xScale(0))
             .attr('y', 0)
             .attr('width', 1)
-            .attr('height', yScale(0));
+            .attr('height', yScale(Math.log(backgroundCutoff)));
         svg.append('rect')
             .attr('class', 'axis')
             .attr('x', xScale(0))
-            .attr('y', yScale(0))
+            .attr('y', yScale(Math.log(backgroundCutoff)))
             .attr('width', 580)
             .attr('height', 1);
 
@@ -249,7 +269,7 @@ DecayDemo.ResultsView = Backbone.View.extend({
             });
 
         var yTickData = [
-            { bq : Math.pow(10, 3), label : '1 KBq' },
+            { bq : Math.pow(10, 6), label : '1 MBq' },
             { bq : Math.pow(10, 9), label : '1 GBq' },
             { bq : Math.pow(10, 15), label : '1 PBq' }
         ];
