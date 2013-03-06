@@ -9,7 +9,7 @@ var reactors = [
     {
         name : 'Pressurized Water',
         slug : 'pressurized-water',
-        color : '#CC0000',
+        color : '#222222',
         wasteProfile : {
             // units are kg/MTU initial
             'Am-241' : 1.400*E(-1) * 15 / 1.344,
@@ -64,7 +64,7 @@ var reactors = [
     {
         name : 'Hypothetical Actinide Burner',
         slug : 'molten-salt',
-        color : '#993399',
+        color : '#FF9900',
         wasteProfile : {
             // units are kg/MTU initial
             'Cs-134' : 9.540*E(-2) * 15 / 1.344,
@@ -166,7 +166,8 @@ DecayDemo.ResultsView = Backbone.View.extend({
             .interpolate('cubic');
 
         svg.append('path')
-            .attr('d', line(data));
+            .attr('d', line(data))
+            .style('stroke', this.model.get('color'));
 
         svg.append('rect')
             .attr('class', 'axis')
