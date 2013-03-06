@@ -161,7 +161,7 @@ DecayDemo.ResultsView = Backbone.View.extend({
               return Math.floor(xScale(Math.log(datum.t)));
             })
             .y(function (datum) {
-              return Math.floor(yScale(Math.log(datum.bq)));
+              return Math.floor(yScale(13));
             })
             .interpolate('cubic');
 
