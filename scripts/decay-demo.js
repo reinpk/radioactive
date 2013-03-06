@@ -191,7 +191,7 @@ DecayDemo.ResultsView = Backbone.View.extend({
 
         var xScale = d3.scale.linear()
             .domain([0, Math.log(_.last(data).t)])
-            .range([35, 580]);
+            .range([100, 580]);
 
         var yScale = d3.scale.linear()
             .domain([Math.log(backgroundCutoff), 40])
@@ -269,9 +269,10 @@ DecayDemo.ResultsView = Backbone.View.extend({
             });
 
         var yTickData = [
-            { bq : Math.pow(10, 6), label : '1 MBq' },
-            { bq : Math.pow(10, 9), label : '1 GBq' },
-            { bq : Math.pow(10, 15), label : '1 PBq' }
+            { bq : Math.pow(10, 6), label : '1 MBq / GWe-year' },
+            { bq : backgroundSoilRadiation, label : 'Natural Soil' },
+            { bq : Math.pow(10, 9), label : '1 GBq / GWe-year' },
+            { bq : Math.pow(10, 15), label : '1 PBq / GWe-year' }
         ];
         var yTicks = svg.selectAll('rect.y-tick').data(yTickData);
         yTicks.enter().append('rect')
