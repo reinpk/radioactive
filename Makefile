@@ -1,7 +1,7 @@
 
-min: analytics.js
-	cp src/nuclear-decay.js .
-	uglifyjs -o nuclear-decay.js nuclear-decay-min.js
+min:
+	cp src/radioactive.js .
+	uglifyjs -o radioactive.js radioactive-min.js
 
 release:
 	make min
