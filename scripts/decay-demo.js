@@ -97,10 +97,7 @@ DecayDemo.ReactorModel = Backbone.Model.extend({
         name          : null,
         slug          : null,
         color         : null,
-        wasteProfile  : null,
-        wasteAnalysis : null,
-        description   : null,
-        diagram       : null
+        wasteProfile  : null
     }
 });
 
@@ -111,57 +108,10 @@ DecayDemo.ReactorCollection = Backbone.Collection.extend({
 
 // Views
 
-DecayDemo.ReactorListItemView = Backbone.View.extend({
-
-    tagName   : 'li',
-    className : 'demo-reactor-list-item',
-
-    template : _.template('<a href="#<%= slug %>"><%= name %></a>'),
-
-    events : {
-        'click' : 'onItemClick'
-    },
-
-    render : function () {
-        this.$el.html(this.template(this.model.toJSON()));
-        return this;
-    },
-
-    onItemClick : function () {
-        this.trigger('selected', this);
-    }
-});
-
-DecayDemo.ReactorListView = Backbone.View.extend({
-
-    tagName : 'ul',
-    className : 'demo-reactor-list',
-
-    render : function () {
-        var self = this;
-        this.collection.each(function (model) {
-            var itemView = new DecayDemo.ReactorListItemView({
-                model : model
-            });
-            itemView.render()
-                    .on('selected', self.onItemSelected, self);
-            self.$el.append(itemView.$el);
-        });
-    },
-
-    onItemSelected : function (itemView) {
-        this.$el.find('.demo-reactor-list-item').toggleClass('selected', false);
-        itemView.$el.toggleClass('selected', true);
-
-        this.trigger('selected:reactor', itemView.model);
-    }
-});
-
 DecayDemo.ResultsView = Backbone.View.extend({
 
     initialize : function (options) {
-        if (options.reactorListView)
-            options.reactorListView.on('selected:reactor', this.onReactorSelected, this);
+        this.onReactorSelected(options.collection.first());
     },
 
     onReactorSelected : function (reactorModel) {
@@ -170,10 +120,6 @@ DecayDemo.ResultsView = Backbone.View.extend({
     },
 
     render : function () {
-        this.$('.demo-results-title').text(this.model.get('name') + ' Reactor Waste');
-        this.$('.demo-waste-analysis').html(this.model.get('wasteAnalysis'));
-        this.$('.demo-reactor-description').html(this.model.get('description'));
-
         this.renderGraph();
         return this;
     },
@@ -206,11 +152,11 @@ DecayDemo.ResultsView = Backbone.View.extend({
 
         var xScale = d3.scale.linear()
             .domain([0, Math.log(_.last(data).t)])
-            .range([35, 480]);
+            .range([35, 580]);
 
         var yScale = d3.scale.linear()
             .domain([0, Math.log(_.first(data).bq)])
-            .range([300, 5]);
+            .range([250, 5]);
 
         var line = d3.svg.line()
             .x(function (datum) {
@@ -234,7 +180,7 @@ DecayDemo.ResultsView = Backbone.View.extend({
             .attr('class', 'axis')
             .attr('x', xScale(0))
             .attr('y', yScale(0))
-            .attr('width', 480)
+            .attr('width', 580)
             .attr('height', 1);
 
         var tickData = [
@@ -299,16 +245,8 @@ $(function () {
 
     var reactorCollection = new DecayDemo.ReactorCollection(reactors);
 
-    var reactorList = new DecayDemo.ReactorListView({
-        el         : $('.demo-reactor-list'),
+    new DecayDemo.ResultsView({
+        el         : $('.demo-graph'),
         collection : reactorCollection
     });
-    reactorList.render();
-
-    var results = new DecayDemo.ResultsView({
-        el              : $('.demo-results'),
-        reactorListView : reactorList
-    });
-
-    $('.demo-reactor-list-item').first().click();
 });

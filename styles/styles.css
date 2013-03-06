@@ -101,62 +101,9 @@ header {
   position:relative;
 }
 
-header ul {
-  list-style:none;
-  height:40px;
-
-  padding:0;
-
-  background: #eee;
-  background: -moz-linear-gradient(top, #f8f8f8 0%, #dddddd 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f8f8f8), color-stop(100%,#dddddd));
-  background: -webkit-linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
-  background: -o-linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
-  background: -ms-linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
-  background: linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
-
-  border-radius:5px;
-  border:1px solid #d2d2d2;
-  box-shadow:inset #fff 0 1px 0, inset rgba(0,0,0,0.03) 0 -1px 0;
-}
-
-header li {
-  width:89px;
-  float:left;
-  height:40px;
-}
-
-header ul a {
-  line-height:1;
-  font-size:11px;
-  color:#999;
-  display:block;
-  text-align:center;
-  padding-top:6px;
-  height:40px;
-  text-decoration:none;
-}
-
 strong {
   color:#222;
   font-weight:700;
-}
-
-header ul li + li {
-  width:88px;
-  border-left:1px solid #fff;
-}
-
-header ul li + li + li {
-  border-right:none;
-  width:89px;
-}
-
-header ul a strong {
-  font-size:14px;
-  display:block;
-  color:#222;
-  margin-top:3px;
 }
 
 header a.home {
@@ -200,12 +147,6 @@ header {
 
 header a small {
   display:inline;
-}
-
-header ul {
-  position:absolute;
-  right:0;
-  top:32px;
 }
 
 section {
@@ -274,48 +215,14 @@ footer {
   min-height: 600px;
 }
 
-.demo-reactor-list {
-  position: absolute;
-  list-style: none;
-  padding: 0;
-  left: 0;
-  padding-top: 120px;
-  width: 150px;
-  height: 320px;
-  border-right: 1px solid #f2f2f2;
-}
-.demo-reactor-list-item, .demo-reactor-list-header {
-  padding: 4px;
-  padding-left: 10px;
+.demo-graph {
+  position: relative;
+  top: 10px;
+  left: 0px;
+  width: 100%;
+  min-height: 600px;
+  font-family: Arial, sans-serif;
   font-size: 14px;
-  font-family: Arial, sans-serif;
-}
-.demo-reactor-list-header {
-  color: #BBB;
-  padding-left: 0px;
-}
-.demo-reactor-list-item.selected a {
-  text-decoration: none;
-  color: #333;
-}
-
-
-.demo-results {
-  position: absolute;
-  left: 150px;
-  top: 0;
-  right: 0;
-  min-height: 500px;
-  padding-left: 27px;
-  font-family: Arial, sans-serif;
-  font-size: 12px;
-}
-
-.demo-results-title {
-  padding: 0;
-  margin: 0;
-  margin-bottom: 20px;
-  font-size: 16px;
 }
 
 
