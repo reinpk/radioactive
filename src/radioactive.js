@@ -718,6 +718,7 @@
                     var seriesBq = profiles[i].radioactivity(years);
                     Bq = _.defaults(Bq, seriesBq);
                     Bq.total += seriesBq.total;
+                    console.log(seriesBq);
                 }
                 return Bq;
             };
