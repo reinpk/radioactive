@@ -1,12 +1,12 @@
 body {
   padding:50px;
   font:19px/1.5 Times, serif;
-  color:#333;
+  color:#69665b;
   font-weight:300;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color:#222;
+  color:rgb(66, 63, 55);
   margin:0 0 20px;
 }
 
