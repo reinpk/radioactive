@@ -54,7 +54,7 @@
           But most radioactive isotopes decay into <i>other</i> radioactive isotopes. For example, uranium-235 decays to thorium-231, which decays to protactinium-231, which then goes through <i>eight</i> more decays before finally being transmuted to lead-207, which is a stable isotope. If you want to talk about the radioactivity and composition of radioactive waste you need to model this entire chain of decays.
         </p>
         <p>
-          There are four primary <a href="http://en.wikipedia.org/wiki/Decay_chain">decay chains</a>, because radioactive atoms drop in mass by increments of 4 atomic mass units through <a href="http://en.wikipedia.org/wiki/Alpha_decay">alpha decay</a>. They are the Thorium Series, Neptunium Series, Radium Series and Actinium Series -- and the half-life of each isotope in each series must be used to calculate the overall decay profile. This data is included in <a href="https://github.com/reinpk/radioactive/blob/master/src/radioactive.js#L31">radioactive.js:isotopeData</a>.
+          There are four primary <a href="http://en.wikipedia.org/wiki/Decay_chain">decay chains</a>, because radioactive atoms drop in mass by increments of 4 atomic mass units through <a href="http://en.wikipedia.org/wiki/Alpha_decay">alpha decay</a>. They are the Thorium Series, Neptunium Series, Radium Series and Actinium Series -- and the half-life of each isotope in each series must be used to calculate the overall decay profile. This data is included at <a href="https://github.com/reinpk/radioactive/blob/master/src/radioactive.js#L31">radioactive.js:31</a>.
         </p>
         <p>
           Now the math starts getting a little fancy, because the decay of each isotope influences the rate of decay of the next isotope in the chain. The decay rate of the top-level isotope is what we found before:
@@ -98,7 +98,7 @@
           $$ C_{ik} = 0 \text{ for } k > i $$
           $$ C_{ii} = N_i(0) - \sum_{k=1}^{i-1} C_{ik} $$
 
-          This closed-form solution is used to calculate decay profiles in <a href="https://github.com/reinpk/radioactive/blob/master/src/radioactive.js#L630">radioactive.js:decayChainProfile</a>.
+          This closed-form solution is used to calculate decay profiles at <a href="https://github.com/reinpk/radioactive/blob/master/src/radioactive.js#L630">radioactive.js:630</a>.
         </p>
       </section>
 
