@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Decay physics in nuclear.js</title>
+    <title>Decay physics in radioactive.js</title>
 
     <link rel="stylesheet" href="styles/styles.css">
     <!--[if lt IE 9]>
@@ -20,9 +20,9 @@
   <body>
     <div class="wrapper">
       <header>
-        <a class="home" href="../nuclear.js">&laquo; nuclear.js</a>
+        <a class="home" href="../radioactive">&laquo; radioactive.js</a>
         <h1>The Physics of Nuclear Decay</h1>
-        <p>How nuclear.js calculates radioactive decay profiles.</p>
+        <p>How radioactive.js calculates radioactive decay profiles.</p>
       </header>
       <section>
         <h2>One Radioactive Isotope</h2>
@@ -54,7 +54,7 @@
           But most radioactive isotopes decay into <i>other</i> radioactive isotopes. For example, uranium-235 decays to thorium-231, which decays to protactinium-231, which then goes through <i>eight</i> more decays before finally being transmuted to lead-207, which is a stable isotope. If you want to talk about the radioactivity and composition of radioactive waste you need to model this entire chain of decays.
         </p>
         <p>
-          There are four primary <a href="http://en.wikipedia.org/wiki/Decay_chain">decay chains</a>, because radioactive atoms drop in mass by increments of 4 atomic mass units through <a href="http://en.wikipedia.org/wiki/Alpha_decay">alpha decay</a>. They are the Thorium Series, Neptunium Series, Radium Series and Actinium Series -- and the half-life of each isotope in each series must be used to calculate the overall decay profile. This data is included in <a href="https://github.com/reinpk/nuclear.js/blob/master/src/nuclear.js#L31">nuclear.js:isotopeData</a>.
+          There are four primary <a href="http://en.wikipedia.org/wiki/Decay_chain">decay chains</a>, because radioactive atoms drop in mass by increments of 4 atomic mass units through <a href="http://en.wikipedia.org/wiki/Alpha_decay">alpha decay</a>. They are the Thorium Series, Neptunium Series, Radium Series and Actinium Series -- and the half-life of each isotope in each series must be used to calculate the overall decay profile. This data is included in <a href="https://github.com/reinpk/radioactive/blob/master/src/radioactive.js#L31">radioactive.js:isotopeData</a>.
         </p>
         <p>
           Now the math starts getting a little fancy, because the decay of each isotope influences the rate of decay of the next isotope in the chain. The decay rate of the top-level isotope is what we found before:
@@ -98,7 +98,7 @@
           $$ C_{ik} = 0 \text{ for } k > i $$
           $$ C_{ii} = N_i(0) - \sum_{k=1}^{i-1} C_{ik} $$
 
-          This closed-form solution is used to calculate decay profiles in <a href="https://github.com/reinpk/nuclear.js/blob/master/src/nuclear.js#L550">nuclear.js:decayProfile</a>.
+          This closed-form solution is used to calculate decay profiles in <a href="https://github.com/reinpk/radioactive/blob/master/src/radioactive.js#L630">radioactive.js:decayChainProfile</a>.
         </p>
       </section>
 
