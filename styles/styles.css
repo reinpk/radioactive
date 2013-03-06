@@ -207,20 +207,12 @@ footer {
   font-family: Arial, sans-serif;
 }
 
-.demo-container {
-  position: relative;
-  top: 10px;
-  left: 0px;
-  width: 100%;
-  min-height: 600px;
-}
-
 .demo-graph {
   position: relative;
   top: 10px;
   left: 0px;
   width: 100%;
-  min-height: 600px;
+  height: 350px;
   font-family: Arial, sans-serif;
   font-size: 14px;
 }

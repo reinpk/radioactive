@@ -5,6 +5,20 @@ var E = function (exponent) {
     return Math.pow(10, exponent);
 };
 
+/*
+Thesis pg 3 has graph
+http://trace.tennessee.edu/cgi/viewcontent.cgi?article=1838&context=utk_graddiss
+
+Has typical LWR isotope data
+http://radchem.nevada.edu/docs/course%20reading/radiochem%20nucl%20power%20reactor.pdf
+
+OECD NEA Spent Fuel Isotopic Composition Database
+http://www.oecd-nea.org/sfcompo/
+
+Recommended datasets from ORNL
+http://www.ornl.gov/~webworks/cppr/y2002/rpt/93933.pdf
+*/
+
 var reactors = [
     {
         name : 'Pressurized Water',
@@ -12,7 +26,7 @@ var reactors = [
         color : '#222222',
         wasteProfile : {
             // units are kg/MTU initial
-            /*'Am-241' : 1.400*E(-1) * 15 / 1.344,
+            'Am-241' : 1.400*E(-1) * 15 / 1.344,
             'Cm-242' : 1.190*E(-2) * 15 / 1.344,
             'Cm-244' : 1.650*E(-2) * 15 / 1.344,
             'Cs-134' : 9.540*E(-2) * 15 / 1.344,
@@ -24,7 +38,7 @@ var reactors = [
             'Pu-241' : 1.110*E(0) * 15 / 1.344,
             'Pu-242' : 3.660*E(-1) * 15 / 1.344,
             'U-235'  : 1.010*E(1) * 15 / 1.344,
-            'U-236'  : 4.050*E(0) * 15 / 1.344,*/
+            'U-236'  : 4.050*E(0) * 15 / 1.344,
             'U-238'  : 9.480*E(2) * 15 / 1.344
         },
         wasteDataSource : 'http://www.oecd-nea.org/sfcompo/Ver.2/search/search.pl?rosin=Obrigheim&cell=BE124&pin=G7&axis=2315'
@@ -62,16 +76,39 @@ var reactors = [
         wasteDataSource : 'https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=3&ved=0CDoQFjAC&url=http%3A%2F%2Fwww.scirp.org%2Fjournal%2FPaperDownload.aspx%3FDOI%3D10.4236%2Fwjnst.2011.12006&ei=_m3zUODYH-OXiAKqkYG4CQ&usg=AFQjCNEevchP7rDdn-83oQXxqBkRz6YHEA'
     },
     {
+        name : 'Hypothetical Super Efficient Reactor',
+        slug : 'super-efficient',
+        color : '#99FF00',
+        wasteProfile : {
+            // units are kg/MTU initial
+            'Am-241' : 1.400*E(-1) * 15 / 1.344,
+            'Cm-242' : 1.190*E(-2) * 15 / 1.344,
+            'Cm-244' : 1.650*E(-2) * 15 / 1.344,
+            'Cs-134' : 9.540*E(-2) * 15 / 1.344,
+            'Cs-137' : 1.000*E(0) * 15 / 1.344,
+            'Eu-154' : 1.970*E(-2) * 15 / 1.344,
+            'Pu-238' : 1.060*E(-1) * 15 / 1.344,
+            'Pu-239' : 5.080*E(0) * 15 / 1.344,
+            'Pu-240' : 2.040*E(0) * 15 / 1.344,
+            'Pu-241' : 1.110*E(0) * 15 / 1.344,
+            'Pu-242' : 3.660*E(-1) * 15 / 1.344,
+            'U-235'  : 1.010*E(1) * 15 / 1.344,
+            'U-236'  : 4.050*E(0) * 15 / 1.344,
+            'U-238'  : 3.480*E(2) * 15 / 1.344
+        },
+        wasteDataSource : 'http://www.oecd-nea.org/sfcompo/Ver.2/search/search.pl?rosin=Gundremmingen&cell=B23&pin=A1&axis=2680'
+    },
+    {
         name : 'Hypothetical Actinide Burner',
         slug : 'molten-salt',
         color : '#FF9900',
         wasteProfile : {
             // units are kg/MTU initial
-            /*'Cs-134' : 9.540*E(-2) * 15 / 1.344,
+            'Cs-134' : 9.540*E(-2) * 15 / 1.344,
             'Cs-137' : 1.000*E(0) * 15 / 1.344,
             'Eu-154' : 1.970*E(-2) * 15 / 1.344,
             'U-235'  : 1.010*E(0) * 15 / 1.344,
-            'U-236'  : 4.050*E(0) * 15 / 1.344,*/
+            'U-236'  : 4.050*E(0) * 15 / 1.344,
             'U-238'  : 9.480*E(1) * 15 / 1.344
         },
         wasteDataSource : 'http://www.ornl.gov/~webworks/cppr/y2001/pres/118013.pdf'
@@ -108,7 +145,7 @@ DecayDemo.ResultsView = Backbone.View.extend({
 
     initialize : function (options) {
         this.onReactorSelected(options.collection.first());
-        //this.onReactorSelected(options.collection.at(1));
+        this.onReactorSelected(options.collection.at(3));
         this.onReactorSelected(options.collection.last());
     },
 
@@ -153,7 +190,7 @@ DecayDemo.ResultsView = Backbone.View.extend({
             .range([35, 580]);
 
         var yScale = d3.scale.linear()
-            .domain([0, Math.log(_.first(data).bq)])
+            .domain([0, 40])
             .range([250, 5]);
 
         var line = d3.svg.line()
@@ -161,7 +198,7 @@ DecayDemo.ResultsView = Backbone.View.extend({
               return Math.floor(xScale(Math.log(datum.t)));
             })
             .y(function (datum) {
-              return Math.floor(yScale(13));
+              return Math.floor(yScale(Math.log(datum.bq)));
             })
             .interpolate('cubic');
 
