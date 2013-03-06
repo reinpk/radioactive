@@ -252,7 +252,7 @@ DecayDemo.ResultsView = Backbone.View.extend({
             .attr('x', function (datum) {
                 return Math.round(xScale(Math.log(datum.y)));
             })
-            .attr('y', yScale(0))
+            .attr('y', yScale(Math.log(backgroundCutoff)))
             .attr('width', 1)
             .attr('height', 3);
 
@@ -262,7 +262,7 @@ DecayDemo.ResultsView = Backbone.View.extend({
             .attr('x', function (datum) {
                 return xScale(Math.log(datum.y));
             })
-            .attr('y', yScale(0)+15)
+            .attr('y', yScale(Math.log(backgroundCutoff))+15)
             .attr('text-anchor', 'middle')
             .text(function (datum) {
                 return datum.label;
