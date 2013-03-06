@@ -27,10 +27,7 @@ var reactors = [
             'U-236'  : 4.050*E(0) * 15 / 1.344,
             'U-238'  : 9.480*E(2) * 15 / 1.344
         },
-        wasteDataSource : 'http://www.oecd-nea.org/sfcompo/Ver.2/search/search.pl?rosin=Obrigheim&cell=BE124&pin=G7&axis=2315',
-        wasteAnalysis : '',
-        description   : '',
-        diagram       : ''
+        wasteDataSource : 'http://www.oecd-nea.org/sfcompo/Ver.2/search/search.pl?rosin=Obrigheim&cell=BE124&pin=G7&axis=2315'
     },
     {
         name : 'Boiling Water',
@@ -55,30 +52,21 @@ var reactors = [
             'U-236'  : 3.260*E(0) * 15 / 1.344,
             'U-238'  : 9.520*E(2) * 15 / 1.344
         },
-        wasteDataSource : 'http://www.oecd-nea.org/sfcompo/Ver.2/search/search.pl?rosin=Gundremmingen&cell=B23&pin=A1&axis=2680',
-        wasteAnalysis : '',
-        description   : '',
-        diagram       : ''
+        wasteDataSource : 'http://www.oecd-nea.org/sfcompo/Ver.2/search/search.pl?rosin=Gundremmingen&cell=B23&pin=A1&axis=2680'
     },
     {
         name : 'Heavy Water',
         slug : 'heavy-water',
         color : '#FFCC00',
         wasteProfile : [],
-        wasteDataSource : 'https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=3&ved=0CDoQFjAC&url=http%3A%2F%2Fwww.scirp.org%2Fjournal%2FPaperDownload.aspx%3FDOI%3D10.4236%2Fwjnst.2011.12006&ei=_m3zUODYH-OXiAKqkYG4CQ&usg=AFQjCNEevchP7rDdn-83oQXxqBkRz6YHEA',
-        wasteAnalysis : '',
-        description   : '',
-        diagram       : ''
+        wasteDataSource : 'https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=3&ved=0CDoQFjAC&url=http%3A%2F%2Fwww.scirp.org%2Fjournal%2FPaperDownload.aspx%3FDOI%3D10.4236%2Fwjnst.2011.12006&ei=_m3zUODYH-OXiAKqkYG4CQ&usg=AFQjCNEevchP7rDdn-83oQXxqBkRz6YHEA'
     },
     {
         name : 'Molten Salt',
         slug : 'molten-salt',
         color : '#993399',
         wasteProfile : [],
-        wasteDataSource : 'http://www.ornl.gov/~webworks/cppr/y2001/pres/118013.pdf',
-        wasteAnalysis : '',
-        description   : '',
-        diagram       : ''
+        wasteDataSource : 'http://www.ornl.gov/~webworks/cppr/y2001/pres/118013.pdf'
     }
 ];
 
