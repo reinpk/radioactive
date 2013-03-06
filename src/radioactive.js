@@ -568,8 +568,13 @@
 
     };
 
+
+    // Define core library functions
+    // -----------------------------
+
     var nuclear = {
 
+        // get decay products for the given isotope
         decayProducts : function (isotope) {
             var datum = isotopeData[isotope];
             if (datum && datum.product)
@@ -581,6 +586,7 @@
                 return datum.products;
         },
 
+        // get the complete decay chain for the given isotope
         decayChain : function (isotope) {
             var chain = [ isotope ];
             var decayProduct = this.decayProducts(isotope);
@@ -602,6 +608,12 @@
             return chain;
         },
 
+        // This prepares a decay profile for the given `charge` distribution
+        // of input isotopes. Only works for one starting chain, so if you want
+        // to use it for an arbitrary charge profile you need to loop over all
+        // the possible chains (see the decayProfile function below).
+        // It returns a dictionary of functions that can compute
+        // the distribution of isotopes or radiation at any given time.
         decayChainProfile : function (isotope, charge) {
 
             var chain = this.decayChain(isotope);
@@ -673,6 +685,9 @@
             };
         },
 
+        // For any given starting profile of isotopes, returns
+        // a complete decay profile for all involved chains in one
+        // dictionary of time-functions for radiation & isotope distribution.
         decayProfile : function (startingProfile) {
 
             var charge = _.clone(startingProfile);
