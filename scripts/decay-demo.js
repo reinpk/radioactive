@@ -12,7 +12,7 @@ var reactors = [
         color : '#222222',
         wasteProfile : {
             // units are kg/MTU initial
-            'Am-241' : 1.400*E(-1) * 15 / 1.344,
+            /*'Am-241' : 1.400*E(-1) * 15 / 1.344,
             'Cm-242' : 1.190*E(-2) * 15 / 1.344,
             'Cm-244' : 1.650*E(-2) * 15 / 1.344,
             'Cs-134' : 9.540*E(-2) * 15 / 1.344,
@@ -24,7 +24,7 @@ var reactors = [
             'Pu-241' : 1.110*E(0) * 15 / 1.344,
             'Pu-242' : 3.660*E(-1) * 15 / 1.344,
             'U-235'  : 1.010*E(1) * 15 / 1.344,
-            'U-236'  : 4.050*E(0) * 15 / 1.344,
+            'U-236'  : 4.050*E(0) * 15 / 1.344,*/
             'U-238'  : 9.480*E(2) * 15 / 1.344
         },
         wasteDataSource : 'http://www.oecd-nea.org/sfcompo/Ver.2/search/search.pl?rosin=Obrigheim&cell=BE124&pin=G7&axis=2315'
@@ -108,7 +108,7 @@ DecayDemo.ResultsView = Backbone.View.extend({
 
     initialize : function (options) {
         this.onReactorSelected(options.collection.first());
-        this.onReactorSelected(options.collection.at(1));
+        //this.onReactorSelected(options.collection.at(1));
         this.onReactorSelected(options.collection.last());
     },
 
