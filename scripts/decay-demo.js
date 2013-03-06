@@ -172,10 +172,11 @@ DecayDemo.ResultsView = Backbone.View.extend({
             .attr('height', 1);
 
         var tickData = [
-            { y : 10, label : '10 yr' },
-            { y : 1000, label : '1000 yr' },
-            { y : 1000000, label : '1m yr' },
-            { y : 10000000000, label : '10B yr'}
+            { y : 1, label : 'Start' },
+            { y : 10, label : '10 years' },
+            { y : 1000, label : '1000 years' },
+            { y : 1000000, label : '1m years' },
+            { y : 10000000000, label : '10B years'}
         ];
         var ticks = svg.selectAll('rect.tick').data(tickData);
         ticks.enter().append('rect')
