@@ -171,7 +171,7 @@ DecayDemo.ResultsView = Backbone.View.extend({
         // Real reactors
         this.onReactorSelected(options.collection.at(0));
         this.onReactorSelected(options.collection.at(3));
-        //this.onReactorSelected(options.collection.at(4));
+        this.onReactorSelected(options.collection.at(4));
         
         // Simple single isotopes
         // this.onReactorSelected(options.collection.at(5));
