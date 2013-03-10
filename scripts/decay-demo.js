@@ -122,6 +122,14 @@ var reactors = [
         }
     },
     {
+        name : 'Plutonium-239',
+        slug : 'plutonium-239',
+        color : '#FF9900',
+        wasteProfile : {
+            'Pu-239'  : 3.480*E(1) * 15 / 1.344
+        }
+    },
+    {
         name : 'Uranium-238',
         slug : 'uranium-238',
         color : '#0066FF',
@@ -164,6 +172,7 @@ DecayDemo.ResultsView = Backbone.View.extend({
         //this.onReactorSelected(options.collection.at(3));
         this.onReactorSelected(options.collection.at(5));
         this.onReactorSelected(options.collection.at(6));
+        this.onReactorSelected(options.collection.at(7));
     },
 
     onReactorSelected : function (reactorModel) {
