@@ -112,6 +112,22 @@ var reactors = [
             'U-238'  : 3.480*E(2) * 15 / 1.344
         },
         wasteDataSource : 'http://www.ornl.gov/~webworks/cppr/y2001/pres/118013.pdf'
+    },
+    {
+        name : 'Cesium-137',
+        slug : 'cesium-137',
+        color : '#FF0000',
+        wasteProfile : {
+            'Cs-137' : 1.000*E(2) * 15 / 1.344,
+        }
+    },
+    {
+        name : 'Uranium-238',
+        slug : 'uranium-238',
+        color : '#0066FF',
+        wasteProfile : {
+            'U-238'  : 3.480*E(2) * 15 / 1.344
+        }
     }
 ];
 
@@ -144,9 +160,10 @@ DecayDemo.ReactorCollection = Backbone.Collection.extend({
 DecayDemo.ResultsView = Backbone.View.extend({
 
     initialize : function (options) {
-        this.onReactorSelected(options.collection.first());
+        //this.onReactorSelected(options.collection.first());
         //this.onReactorSelected(options.collection.at(3));
-        //this.onReactorSelected(options.collection.last());
+        this.onReactorSelected(options.collection.at(5));
+        this.onReactorSelected(options.collection.at(6));
     },
 
     onReactorSelected : function (reactorModel) {
