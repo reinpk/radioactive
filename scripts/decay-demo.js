@@ -114,11 +114,11 @@ var reactors = [
         wasteDataSource : 'http://www.ornl.gov/~webworks/cppr/y2001/pres/118013.pdf'
     },
     {
-        name : 'Cesium-137',
-        slug : 'cesium-137',
+        name : 'Cesium-134',
+        slug : 'cesium-134',
         color : '#FF0000',
         wasteProfile : {
-            'Cs-137' : 1.000*E(0) * 15 / 1.344,
+            'Cs-134' : 1.000*E(0) * 15 / 1.344,
         }
     },
     {
