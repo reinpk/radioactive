@@ -168,11 +168,15 @@ DecayDemo.ReactorCollection = Backbone.Collection.extend({
 DecayDemo.ResultsView = Backbone.View.extend({
 
     initialize : function (options) {
-        //this.onReactorSelected(options.collection.first());
-        //this.onReactorSelected(options.collection.at(3));
-        this.onReactorSelected(options.collection.at(5));
-        this.onReactorSelected(options.collection.at(6));
-        this.onReactorSelected(options.collection.at(7));
+        // Real reactors
+        this.onReactorSelected(options.collection.at(0));
+        this.onReactorSelected(options.collection.at(3));
+        //this.onReactorSelected(options.collection.at(4));
+        
+        // Simple single isotopes
+        // this.onReactorSelected(options.collection.at(5));
+        // this.onReactorSelected(options.collection.at(6));
+        // this.onReactorSelected(options.collection.at(7));
     },
 
     onReactorSelected : function (reactorModel) {
