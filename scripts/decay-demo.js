@@ -118,7 +118,7 @@ var reactors = [
         slug : 'cesium-137',
         color : '#FF0000',
         wasteProfile : {
-            'Cs-137' : 1.000*E(2) * 15 / 1.344,
+            'Cs-137' : 1.000*E(0) * 15 / 1.344,
         }
     },
     {
