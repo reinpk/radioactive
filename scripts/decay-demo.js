@@ -145,8 +145,8 @@ DecayDemo.ResultsView = Backbone.View.extend({
 
     initialize : function (options) {
         this.onReactorSelected(options.collection.first());
-        this.onReactorSelected(options.collection.at(3));
-        this.onReactorSelected(options.collection.last());
+        //this.onReactorSelected(options.collection.at(3));
+        //this.onReactorSelected(options.collection.last());
     },
 
     onReactorSelected : function (reactorModel) {
