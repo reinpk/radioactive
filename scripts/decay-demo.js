@@ -207,7 +207,7 @@ DecayDemo.ResultsView = Backbone.View.extend({
         var svg = d3.select('svg');
 
         var xScale = d3.scale.linear()
-            .domain([0, Math.log(_.last(data).t)])
+            .domain([0, 10])
             .range([100, 580]);
 
         var yScale = d3.scale.linear()
