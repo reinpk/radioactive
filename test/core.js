@@ -47,21 +47,31 @@ describe('radioactive.js', function () {
 
 
 
-    // Decay Profiles
-    // --------------
+    // Decay Profile
+    // -------------
 
-    describe('decay profiles', function () {
+    describe('decay profile', function () {
 
-        it('has a correct decay profile', function () {
-            var profile = nuclear.decayProfile({
-                'Pu-239' : 1
+        it('has an exponential decay for each single isotope', function () {
+
+            _.each(_.keys(nuclear.isotopeData), function (isotopeName) {
+
+                var initialConcentration = {};
+                initialConcentration[isotopeName] = 1;
+
+                var profile = nuclear.decayProfile(initialConcentration);
+
+                var halflife = nuclear.isotopeData[isotopeName].halflife;
+
+                for (var halflives = 0; halflives < 5; halflives++) {
+                    var remaining = profile.concentration(halflife*halflives)[isotopeName];
+                    var remainingExpected = Math.pow(0.5, halflives);
+
+                    var error = Math.abs( (remaining - remainingExpected) / remainingExpected );
+                    expect(error).to.be.lessThan(0.0000001);
+                }
+
             });
-
-            console.log(profile);
-
-            for (var tpow = 0; tpow < 20; tpow++) {
-                console.log(profile.radioactivity(Math.pow(10, tpow)).total);
-            }
         });
     });
 

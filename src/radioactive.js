@@ -574,6 +574,8 @@
 
     var nuclear = {
 
+        isotopeData : isotopeData,
+
         // get decay products for the given isotope
         decayProducts : function (isotope) {
             var datum = isotopeData[isotope];
@@ -692,8 +694,6 @@
 
             var charge = _.clone(startingProfile);
             var isotopesAtStart = _.keys(charge);
-
-            console.log(isotopesAtStart);
 
             var self = this;
             var profiles = _.map(isotopesAtStart, function (isotope) {
