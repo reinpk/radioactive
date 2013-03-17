@@ -656,7 +656,7 @@ extend(Radioactive.prototype, {
             var concentration = { total : 0 };
             for (var i = 0; i < profiles.length; i++) {
                 var seriesConcentration = profiles[i].concentration(years);
-                concentration = _.defaults(concentration, seriesConcentration);
+                concentration = defaults(concentration, seriesConcentration);
                 concentration.total += seriesConcentration.total;
             }
             return concentration;
@@ -667,7 +667,7 @@ extend(Radioactive.prototype, {
             var Bq = { total : 0 };
             for (var i = 0; i < profiles.length; i++) {
                 var seriesBq = profiles[i].radioactivity(years);
-                Bq = _.defaults(Bq, seriesBq);
+                Bq = defaults(Bq, seriesBq);
                 Bq.total += seriesBq.total;
                 console.log(seriesBq);
             }
