@@ -486,6 +486,39 @@ module.exports = function extend (object) {
     return object;
 };
 });
+require.register("reinpk-zeroes/index.js", function(exports, require, module){
+/**
+ * Create a zeroes array with the given `dimensions`.
+ *
+ * @param {Number|Array} dimensions
+ * @return {Array}
+ * @api public
+ */
+
+function zeroes (dimensions) {
+  var array;
+
+  if (dimensions.length === 1) dimensions = dimensions[0];
+
+  // if it's a number, create a flat array of zeroes
+  if (typeof dimensions === 'number') {
+    array = new Array(dimensions);
+    for (var i = 0; i < dimensions; i += 1) {
+      array[i] = 0;
+    }
+  }
+  // else create an array of one-dimension-less arrays full of zeroes
+  else {
+    array = new Array(dimensions[0]);
+    for (var j = 0; j < dimensions[0]; j += 1) {
+      array[j] = zeroes(dimensions.slice(1));
+    }
+  }
+  return array;
+}
+
+module.exports = zeroes;
+});
 require.register("radioactive/src/index.js", function(exports, require, module){
 // radioactive.js
 //
@@ -502,6 +535,7 @@ var extend      = require('extend'),
     map         = require('map'),
     keys        = require('keys'),
     defaults    = require('defaults'),
+    zeroes      = require('zeroes'),
     convert     = require('./convert'),
     isotopeData = require('./isotope-data');
 
@@ -576,9 +610,6 @@ extend(Radioactive.prototype, {
         var lambda = map(chain, function (isotope) {
             return ( Math.log(2) / isotopeData[isotope].halflife );
         });
-        var zeroes = function (length) {
-            return map(_.range(length), function () { return 0; });
-        };
 
         // coefficients for the first row
         C[0] = zeroes(chain.length);
@@ -1271,6 +1302,8 @@ require.alias("matthewp-keys/index.js", "matthewp-keys/index.js");
 require.alias("avetisk-defaults/index.js", "radioactive/deps/defaults/index.js");
 
 require.alias("segmentio-extend/index.js", "radioactive/deps/extend/index.js");
+
+require.alias("reinpk-zeroes/index.js", "radioactive/deps/zeroes/index.js");
 
 require.alias("radioactive/src/index.js", "radioactive/index.js");
 

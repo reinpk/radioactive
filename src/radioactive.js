@@ -3,6 +3,7 @@ var extend      = require('extend'),
     map         = require('map'),
     keys        = require('keys'),
     defaults    = require('defaults'),
+    zeroes      = require('zeroes'),
     convert     = require('./convert'),
     isotopeData = require('./isotope-data');
 
@@ -77,9 +78,6 @@ extend(Radioactive.prototype, {
         var lambda = map(chain, function (isotope) {
             return ( Math.log(2) / isotopeData[isotope].halflife );
         });
-        var zeroes = function (length) {
-            return map(_.range(length), function () { return 0; });
-        };
 
         // coefficients for the first row
         C[0] = zeroes(chain.length);

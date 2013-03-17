@@ -14,7 +14,8 @@
     "component/map": "*",
     "matthewp/keys": "*",
     "avetisk/defaults": "*",
-    "segmentio/extend": "*"
+    "segmentio/extend": "*",
+    "reinpk/zeroes": "*"
   },
   "scripts": [
     "src/index.js",
