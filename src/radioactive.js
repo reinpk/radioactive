@@ -29,7 +29,21 @@ extend(Radioactive.prototype, {
 
     isotopeData : isotopeData,
 
-    // get decay products for the given isotope
+    /**
+     * Get the decay products for the given isotope.
+     *
+     * @param {String} isotope - The compact name of the isotope like 'Pu-239'
+     *
+     * @return {Array} An array of objects containing the compact isotope names and
+     * the fraction of that isotope produced during decay. The form of the arrayis:
+     * [
+     *     {
+     *         fraction : 1,        // in the range [0, 1]
+     *         product  : 'Pu-239', // a compact isotope name
+     *     },
+     *     ...
+     * ]
+     */
     decayProducts : function (isotope) {
         var datum = isotopeData[isotope];
         if (datum && datum.product)
@@ -41,7 +55,13 @@ extend(Radioactive.prototype, {
             return datum.products;
     },
 
-    // get the complete decay chain for the given isotope
+    /**
+     * Get the complete decay chain for the given isotope
+     *
+     * @param {String} isotope - The compact name of the isotope like 'Pu-239'
+     *
+     * @return {Array} An array of all the compact isotope names in the resulting chain.
+     */
     decayChain : function (isotope) {
         var chain = [ isotope ];
         var decayProduct = this.decayProducts(isotope);
@@ -63,12 +83,23 @@ extend(Radioactive.prototype, {
         return chain;
     },
 
-    // This prepares a decay profile for the given `charge` distribution
-    // of input isotopes. Only works for one starting chain, so if you want
-    // to use it for an arbitrary charge profile you need to loop over all
-    // the possible chains (see the decayProfile function below).
-    // It returns a dictionary of functions that can compute
-    // the distribution of isotopes or radiation at any given time.
+    /**
+     * Get a single decay chain time-profile based on the initial charge.
+     * 
+     * This prepares a decay profile for the given `charge` distribution
+     * of input isotopes. Only works for one starting chain, so if you want
+     * to use it for an arbitrary charge profile you need to loop over all
+     * the possible chains (see the decayProfile function below).
+     * It returns a dictionary of functions that can compute
+     * the distribution of isotopes or radiation at any given time.
+     *
+     * @param {String} isotope - The compact name of the isotope (like 'Pu-239')
+     * for where to start this chain.
+     * 
+     * @param {Object} charge  - The dictionary of compact isotope names to initial
+     * charges (kilograms) of that isotope.
+     * 
+     */
     decayChainProfile : function (isotope, charge) {
 
         var chain = this.decayChain(isotope);
@@ -137,21 +168,37 @@ extend(Radioactive.prototype, {
         };
     },
 
-    // For any given starting profile of isotopes, returns
-    // a complete decay profile for all involved chains in one
-    // dictionary of time-functions for radiation & isotope distribution.
-    decayProfile : function (startingProfile) {
+    /**
+     * Get a decay profile of isotope concentration for a starting charge of isotopes.
+     * 
+     * For any given starting profile of isotopes, returns
+     * a complete decay profile for all involved chains as a time-functions
+     * that returns the isotope distribution.
+     * 
+     * @param {Object} charge - The dictionary of compact isotope names (like `Pu-239')
+     * to initial charges (kilograms) of that isotope.
+     * 
+     * @return {Function} A function that can be used to calculate the concentration 
+     * of isotopes at any given time (units of years) since the starting charge.
+     * The format of the object returned by the concentration function is
+     * {
+     *     'Pu-239' : 123, // kilograms
+     *     ...other isotopes...
+     *     'total   : 12345 // kilograms
+     * }
+     */
+    decayConcentration : function (charge) {
 
-        var charge = clone(startingProfile);
-        var isotopesAtStart = keys(charge);
+        var chargeClone = clone(charge);
+        var isotopesAtStart = keys(chargeClone);
 
         var self = this;
         var profiles = map(isotopesAtStart, function (isotope) {
-            return self.decayChainProfile(isotope, charge);
+            return self.decayChainProfile(isotope, chargeClone);
         });
 
         // Merge the concentrations from each series
-        var concentrationProfile = function (years) {
+        return function (years) {
             var concentration = { total : 0 };
             for (var i = 0; i < profiles.length; i++) {
                 var seriesConcentration = profiles[i].concentration(years);
@@ -160,9 +207,39 @@ extend(Radioactive.prototype, {
             }
             return concentration;
         };
+    },
+
+    /**
+     * Get a decay profile of radioactivity for a starting charge of isotopes.
+     * 
+     * For any given starting profile of isotopes, returns
+     * a complete decay profile for all involved chains as a time-function
+     * that returns the radioactivity of each isotope and the total radioactivity.
+     * 
+     * @param {Object} charge - The dictionary of compact isotope names (like `Pu-239')
+     * to initial charges (kilograms) of that isotope.
+     * 
+     * @return {Function} A function that can be used to calculate the radioactivity 
+     * of the existing isotopes at any given time (units of years) since the starting charge.
+     * The format of the object returned by the radioactivity function is
+     * {
+     *     'Pu-239' : 123, // becquerels
+     *     ...other isotopes...
+     *     'total   : 12345 // becquerels
+     * }
+     */
+    decayRadioactivity : function (charge) {
+
+        var chargeClone = clone(charge);
+        var isotopesAtStart = keys(chargeClone);
+
+        var self = this;
+        var profiles = map(isotopesAtStart, function (isotope) {
+            return self.decayChainProfile(isotope, chargeClone);
+        });
 
         // Merge the radioactivity from each series
-        var radioactivityProfile = function (years) {
+        return function (years) {
             var Bq = { total : 0 };
             for (var i = 0; i < profiles.length; i++) {
                 var seriesBq = profiles[i].radioactivity(years);
@@ -171,11 +248,6 @@ extend(Radioactive.prototype, {
                 console.log(seriesBq);
             }
             return Bq;
-        };
-
-        return {
-            concentration : concentrationProfile,
-            radioactivity : radioactivityProfile
         };
     }
 

@@ -59,12 +59,12 @@ describe('radioactive.js', function () {
                 var initialConcentration = {};
                 initialConcentration[isotopeName] = 1;
 
-                var profile = radioactive.decayProfile(initialConcentration);
+                var concentration = radioactive.decayConcentration(initialConcentration);
 
                 var halflife = radioactive.isotopeData[isotopeName].halflife;
 
                 for (var halflives = 0; halflives < 5; halflives++) {
-                    var remaining = profile.concentration(halflife*halflives)[isotopeName];
+                    var remaining = concentration(halflife*halflives)[isotopeName];
                     var remainingExpected = Math.pow(0.5, halflives);
 
                     var error = Math.abs( (remaining - remainingExpected) / remainingExpected );
