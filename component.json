@@ -14,7 +14,9 @@
   },
   "scripts": [
     "src/index.js",
-    "src/radioactive.js"
+    "src/radioactive.js",
+    "src/isotope-data.js",
+    "src/convert.js"
   ],
   "main": "src/index.js"
 }
