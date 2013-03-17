@@ -52,7 +52,7 @@ describe('radioactive.js', function () {
 
     describe('decay profile', function () {
 
-        it('has an exponential decay for each single isotope', function () {
+        it('has simple exponential decay for each single isotope', function () {
 
             _.each(_.keys(nuclear.isotopeData), function (isotopeName) {
 
@@ -73,6 +73,8 @@ describe('radioactive.js', function () {
 
             });
         });
+
+        it('has expected decay rate with child isotope in chain');
     });
 
 });
