@@ -1,14 +1,22 @@
 radioactive.js
 ===============
 
-A library to model nuclear physics in javascript, intended for building visualizations and interactive demonstrations.
+[![Build Status](https://travis-ci.org/reinpk/radioactive.png?branch=master)](https://travis-ci.org/reinpk/radioactive)
+
+
+A library to model nuclear physics in javascript. Intended for building visualizations and interactive demonstrations.
 
 Currently the library can model:
 - decay and radioactivity of nuclear waste
 
+## Getting Started
+
+
+## Future Improvements
+
 It would be cool to add the data and physics required for modeling:
+- fission isotope spread
 - neutron capture
-- fission
 - different varieties of decay radiation (alpha, beta, gamma)
 - energies in decay, capture and fission reactions
 

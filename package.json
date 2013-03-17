@@ -1,19 +1,30 @@
 {
-  "name" : "radioactive",
-  "author" : "Peter Reinhardt <reinpk@gmail.com>",
-  "version" : "0.0.1",
-  "description" : "A library to help with nuclear decay visualizations.",
-  "keywords" : [
-    "nuclear physics", "radioactive waste", "nuclear decay", "visualization"
+  "name"        : "radioactive",
+  "version"     : "0.0.1",
+  "author"      : "Peter Reinhardt <reinpk@gmail.com>",
+  "description" : "A library to model nuclear physics.",
+  "keywords"    : [
+    "nuclear physics",
+    "radioactive waste",
+    "nuclear decay",
+    "visualization"
   ],
-  "url" : "https://github.com/reinpk/radioactive",
-  "repository" : {
+  "url"         : "https://github.com/reinpk/radioactive",
+  "repository"  : {
     "type" : "git",
-    "url" : "git://github.com/reinpk/radioactive.git"
+    "url"  : "git://github.com/reinpk/radioactive.git"
   },
-  "main" : "radioactive.js",
+  "main"    : "src/radioactive.js",
+  "scripts" : {
+    "test" : "make test"
+  },
   "license" : "MIT",
-  "devDependencies": {
-      "uglify-js" : ">= 1.3.4"
+  "devDependencies" : {
+    "mocha-phantomjs" : "1.1.1",
+    "connect"         : "2.7.1",
+    "uglify-js"       : ">= 1.3.4"
+  },
+  "dependencies": {
+    "underscore": "~1.4.3"
   }
 }
