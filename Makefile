@@ -2,10 +2,19 @@
 PHANTOM = node_modules/.bin/mocha-phantomjs
 PHANTOM_OPTS = -s web-security=false -s local-to-remote-url-access=true
 
+# Compiles a one-file copy of analytics.js from all the development files.
+radioactive.js: install
+	component build --standalone radioactive --out . --name radioactive
+
+install:
+	component install
+
+component:
+	component build --out . --name radioactive.component --dev
+
 # Minifies radioactive.js into a releasable form
-min:
-	cp src/radioactive.js .
-	uglifyjs -o radioactive.js radioactive-min.js
+min: radioactive.js
+	uglifyjs -o radioactive.min.js radioactive.js
 
 # Starts the testing server.
 server:

@@ -1,0 +1,20 @@
+{
+  "name": "radioactive",
+  "repo": "reinpk/radioactive",
+  "description" : "A library to model nuclear physics.",
+  "version": "0.0.2",
+  "keywords": [
+    "nuclear physics",
+    "radioactive waste",
+    "nuclear decay",
+    "visualization"
+  ],
+  "dependencies": {
+
+  },
+  "scripts": [
+    "src/index.js",
+    "src/radioactive.js"
+  ],
+  "main": "src/index.js"
+}

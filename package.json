@@ -1,6 +1,6 @@
 {
   "name"        : "radioactive",
-  "version"     : "0.0.1",
+  "version"     : "0.0.2",
   "author"      : "Peter Reinhardt <reinpk@gmail.com>",
   "description" : "A library to model nuclear physics.",
   "keywords"    : [
