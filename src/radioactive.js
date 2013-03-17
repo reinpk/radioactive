@@ -1,4 +1,8 @@
 var extend      = require('extend'),
+    clone       = require('clone'),
+    map         = require('map'),
+    keys        = require('keys'),
+    defaults    = require('defaults'),
     convert     = require('./convert'),
     isotopeData = require('./isotope-data');
 
@@ -70,11 +74,11 @@ extend(Radioactive.prototype, {
         var C = new Array(chain.length);
 
         // calculate lambda coefficients
-        var lambda = _.map(chain, function (isotope) {
+        var lambda = map(chain, function (isotope) {
             return ( Math.log(2) / isotopeData[isotope].halflife );
         });
         var zeroes = function (length) {
-            return _.map(_.range(length), function () { return 0; });
+            return map(_.range(length), function () { return 0; });
         };
 
         // coefficients for the first row
@@ -140,11 +144,11 @@ extend(Radioactive.prototype, {
     // dictionary of time-functions for radiation & isotope distribution.
     decayProfile : function (startingProfile) {
 
-        var charge = _.clone(startingProfile);
-        var isotopesAtStart = _.keys(charge);
+        var charge = clone(startingProfile);
+        var isotopesAtStart = keys(charge);
 
         var self = this;
-        var profiles = _.map(isotopesAtStart, function (isotope) {
+        var profiles = map(isotopesAtStart, function (isotope) {
             return self.decayChainProfile(isotope, charge);
         });
 
