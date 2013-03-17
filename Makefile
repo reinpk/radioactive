@@ -1,4 +1,7 @@
 
+PHANTOM = node_modules/.bin/mocha-phantomjs
+PHANTOM_OPTS = -s web-security=false -s local-to-remote-url-access=true
+
 # Minifies radioactive.js into a releasable form
 min:
 	cp src/radioactive.js .
