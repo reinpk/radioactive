@@ -6,7 +6,7 @@ describe('radioactive.js', function () {
     describe('decay chains', function () {
 
         var searchDecayTree = function (isotope, searchIsotope, searchDecayTree) {
-            var products = nuclear.decayProducts(isotope);
+            var products = radioactive.decayProducts(isotope);
             if (products) {
                 for (var i = 0; i < products.length; i++) {
                     if (products[i].product === searchIsotope)
@@ -54,14 +54,14 @@ describe('radioactive.js', function () {
 
         it('has simple exponential decay for each single isotope', function () {
 
-            _.each(_.keys(nuclear.isotopeData), function (isotopeName) {
+            _.each(_.keys(radioactive.isotopeData), function (isotopeName) {
 
                 var initialConcentration = {};
                 initialConcentration[isotopeName] = 1;
 
-                var profile = nuclear.decayProfile(initialConcentration);
+                var profile = radioactive.decayProfile(initialConcentration);
 
-                var halflife = nuclear.isotopeData[isotopeName].halflife;
+                var halflife = radioactive.isotopeData[isotopeName].halflife;
 
                 for (var halflives = 0; halflives < 5; halflives++) {
                     var remaining = profile.concentration(halflife*halflives)[isotopeName];

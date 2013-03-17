@@ -10,7 +10,7 @@
     "visualization"
   ],
   "dependencies": {
-
+    "segmentio/extend": "*"
   },
   "scripts": [
     "src/index.js",

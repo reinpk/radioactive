@@ -1,6 +1,6 @@
 var extend      = require('extend'),
-    convert     = require('convert'),
-    isotopeData = require('isotope-data');
+    convert     = require('./convert'),
+    isotopeData = require('./isotope-data');
 
 
 module.exports = Radioactive;

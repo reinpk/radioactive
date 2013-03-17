@@ -1,3 +1,425 @@
+;(function(){
+
+
+/**
+ * hasOwnProperty.
+ */
+
+var has = Object.prototype.hasOwnProperty;
+
+/**
+ * Require the given path.
+ *
+ * @param {String} path
+ * @return {Object} exports
+ * @api public
+ */
+
+function require(path, parent, orig) {
+  var resolved = require.resolve(path);
+
+  // lookup failed
+  if (null == resolved) {
+    orig = orig || path;
+    parent = parent || 'root';
+    var err = new Error('Failed to require "' + orig + '" from "' + parent + '"');
+    err.path = orig;
+    err.parent = parent;
+    err.require = true;
+    throw err;
+  }
+
+  var module = require.modules[resolved];
+
+  // perform real require()
+  // by invoking the module's
+  // registered function
+  if (!module.exports) {
+    module.exports = {};
+    module.client = module.component = true;
+    module.call(this, module.exports, require.relative(resolved), module);
+  }
+
+  return module.exports;
+}
+
+/**
+ * Registered modules.
+ */
+
+require.modules = {};
+
+/**
+ * Registered aliases.
+ */
+
+require.aliases = {};
+
+/**
+ * Resolve `path`.
+ *
+ * Lookup:
+ *
+ *   - PATH/index.js
+ *   - PATH.js
+ *   - PATH
+ *
+ * @param {String} path
+ * @return {String} path or null
+ * @api private
+ */
+
+require.resolve = function(path) {
+  if (path.charAt(0) === '/') path = path.slice(1);
+  var index = path + '/index.js';
+
+  var paths = [
+    path,
+    path + '.js',
+    path + '.json',
+    path + '/index.js',
+    path + '/index.json'
+  ];
+
+  for (var i = 0; i < paths.length; i++) {
+    var path = paths[i];
+    if (has.call(require.modules, path)) return path;
+  }
+
+  if (has.call(require.aliases, index)) {
+    return require.aliases[index];
+  }
+};
+
+/**
+ * Normalize `path` relative to the current path.
+ *
+ * @param {String} curr
+ * @param {String} path
+ * @return {String}
+ * @api private
+ */
+
+require.normalize = function(curr, path) {
+  var segs = [];
+
+  if ('.' != path.charAt(0)) return path;
+
+  curr = curr.split('/');
+  path = path.split('/');
+
+  for (var i = 0; i < path.length; ++i) {
+    if ('..' == path[i]) {
+      curr.pop();
+    } else if ('.' != path[i] && '' != path[i]) {
+      segs.push(path[i]);
+    }
+  }
+
+  return curr.concat(segs).join('/');
+};
+
+/**
+ * Register module at `path` with callback `definition`.
+ *
+ * @param {String} path
+ * @param {Function} definition
+ * @api private
+ */
+
+require.register = function(path, definition) {
+  require.modules[path] = definition;
+};
+
+/**
+ * Alias a module definition.
+ *
+ * @param {String} from
+ * @param {String} to
+ * @api private
+ */
+
+require.alias = function(from, to) {
+  if (!has.call(require.modules, from)) {
+    throw new Error('Failed to alias "' + from + '", it does not exist');
+  }
+  require.aliases[to] = from;
+};
+
+/**
+ * Return a require function relative to the `parent` path.
+ *
+ * @param {String} parent
+ * @return {Function}
+ * @api private
+ */
+
+require.relative = function(parent) {
+  var p = require.normalize(parent, '..');
+
+  /**
+   * lastIndexOf helper.
+   */
+
+  function lastIndexOf(arr, obj) {
+    var i = arr.length;
+    while (i--) {
+      if (arr[i] === obj) return i;
+    }
+    return -1;
+  }
+
+  /**
+   * The relative require() itself.
+   */
+
+  function localRequire(path) {
+    var resolved = localRequire.resolve(path);
+    return require(resolved, parent, path);
+  }
+
+  /**
+   * Resolve relative to the parent.
+   */
+
+  localRequire.resolve = function(path) {
+    var c = path.charAt(0);
+    if ('/' == c) return path.slice(1);
+    if ('.' == c) return require.normalize(p, path);
+
+    // resolve deps by returning
+    // the dep in the nearest "deps"
+    // directory
+    var segs = parent.split('/');
+    var i = lastIndexOf(segs, 'deps') + 1;
+    if (!i) i = 0;
+    path = segs.slice(0, i + 1).join('/') + '/deps/' + path;
+    return path;
+  };
+
+  /**
+   * Check if module is defined at `path`.
+   */
+
+  localRequire.exists = function(path) {
+    return has.call(require.modules, localRequire.resolve(path));
+  };
+
+  return localRequire;
+};
+require.register("segmentio-extend/index.js", function(exports, require, module){
+
+module.exports = function extend (object) {
+    // Takes an unlimited number of extenders.
+    var args = Array.prototype.slice.call(arguments, 1);
+
+    // For each extender, copy their properties on our object.
+    for (var i = 0, source; source = args[i]; i++) {
+        if (!source) continue;
+        for (var property in source) {
+            object[property] = source[property];
+        }
+    }
+
+    return object;
+};
+});
+require.register("radioactive/src/index.js", function(exports, require, module){
+// radioactive.js
+//
+// (c) 2013 Peter Reinhardt
+// radioactive.js may be freely distributed under the MIT license.
+
+var Radioactive = require('./radioactive');
+
+module.exports = new Radioactive();
+});
+require.register("radioactive/src/radioactive.js", function(exports, require, module){
+var extend      = require('extend'),
+    convert     = require('./convert'),
+    isotopeData = require('./isotope-data');
+
+
+module.exports = Radioactive;
+
+
+/**
+ * Radioactive.
+ */
+
+function Radioactive () {
+  var self = this;
+  this.VERSION = '0.0.2';
+}
+
+
+/**
+ * Extend the Radioactive prototype.
+ */
+
+extend(Radioactive.prototype, {
+
+    isotopeData : isotopeData,
+
+    // get decay products for the given isotope
+    decayProducts : function (isotope) {
+        var datum = isotopeData[isotope];
+        if (datum && datum.product)
+            return [{
+                fraction : 1,
+                product  : datum.product
+            }];
+        else if (datum && datum.products)
+            return datum.products;
+    },
+
+    // get the complete decay chain for the given isotope
+    decayChain : function (isotope) {
+        var chain = [ isotope ];
+        var decayProduct = this.decayProducts(isotope);
+
+        while (decayProduct) {
+            // choose first decay product
+            decayProduct = decayProduct[0];
+
+            // exit if this isotope is stable
+            if (!isotopeData[decayProduct.product]) break;
+
+            // add this isotope to the chain
+            chain.push(decayProduct.product);
+
+            // get next decay product
+            decayProduct = this.decayProducts(decayProduct.product);
+        }
+
+        return chain;
+    },
+
+    // This prepares a decay profile for the given `charge` distribution
+    // of input isotopes. Only works for one starting chain, so if you want
+    // to use it for an arbitrary charge profile you need to loop over all
+    // the possible chains (see the decayProfile function below).
+    // It returns a dictionary of functions that can compute
+    // the distribution of isotopes or radiation at any given time.
+    decayChainProfile : function (isotope, charge) {
+
+        var chain = this.decayChain(isotope);
+        var C = new Array(chain.length);
+
+        // calculate lambda coefficients
+        var lambda = _.map(chain, function (isotope) {
+            return ( Math.log(2) / isotopeData[isotope].halflife );
+        });
+        var zeroes = function (length) {
+            return _.map(_.range(length), function () { return 0; });
+        };
+
+        // coefficients for the first row
+        C[0] = zeroes(chain.length);
+        C[0][0] = charge[isotope] || 0;
+        charge[isotope] = 0;
+
+        // coefficients for the remaining rows
+        for (var i = 1; i < chain.length; i++) {
+
+            // initialize array to zeroes
+            C[i] = zeroes(chain.length);
+
+            var sum = 0;
+            for (var k = 0; k < i; k++) {
+                C[i][k] = lambda[k] * C[i-1][k] / (lambda[i] - lambda[k]);
+                sum += C[i][k];
+            }
+
+            // the last coefficient (on the diagonal)
+            var Ni0 = charge[chain[i]] || 0;
+            C[i][i] = Ni0 - sum;
+            charge[chain[i]] = 0;
+        }
+
+        // return function that can evaluate the profile for any time
+        var concentrationProfile = function (years) {
+            var N = {};
+            N.total = 0;
+            for (var i = 0; i < C.length; i++) {
+                var Ni = 0;
+                for (var k = 0; k < C[i].length; k++) {
+                    Ni += C[i][k] * Math.exp(-lambda[k] * years);
+                }
+                N[chain[i]] = Math.max(0, Ni);
+                N.total += N[chain[i]];
+            }
+            return N;
+        };
+
+        var radioactivityProfile = function (years) {
+            var Bq = {};
+            Bq.total = 0;
+            for (var i = 0; i < C.length; i++) {
+                var Ni = 0;
+                for (var k = 0; k < C[i].length; k++) {
+                    Ni += C[i][k] * Math.exp(-lambda[k] * years);
+                }
+                Bq[chain[i]] = convert.moles(lambda[i] * Math.max(0, Ni)) / (365.25 * 24 * 60 * 60);
+                Bq.total += Bq[chain[i]];
+            }
+            return Bq;
+        };
+
+        return {
+            concentration : concentrationProfile,
+            radioactivity : radioactivityProfile
+        };
+    },
+
+    // For any given starting profile of isotopes, returns
+    // a complete decay profile for all involved chains in one
+    // dictionary of time-functions for radiation & isotope distribution.
+    decayProfile : function (startingProfile) {
+
+        var charge = _.clone(startingProfile);
+        var isotopesAtStart = _.keys(charge);
+
+        var self = this;
+        var profiles = _.map(isotopesAtStart, function (isotope) {
+            return self.decayChainProfile(isotope, charge);
+        });
+
+        // Merge the concentrations from each series
+        var concentrationProfile = function (years) {
+            var concentration = { total : 0 };
+            for (var i = 0; i < profiles.length; i++) {
+                var seriesConcentration = profiles[i].concentration(years);
+                concentration = _.defaults(concentration, seriesConcentration);
+                concentration.total += seriesConcentration.total;
+            }
+            return concentration;
+        };
+
+        // Merge the radioactivity from each series
+        var radioactivityProfile = function (years) {
+            var Bq = { total : 0 };
+            for (var i = 0; i < profiles.length; i++) {
+                var seriesBq = profiles[i].radioactivity(years);
+                Bq = _.defaults(Bq, seriesBq);
+                Bq.total += seriesBq.total;
+                console.log(seriesBq);
+            }
+            return Bq;
+        };
+
+        return {
+            concentration : concentrationProfile,
+            radioactivity : radioactivityProfile
+        };
+    }
+
+});
+
+
+
+});
+require.register("radioactive/src/isotope-data.js", function(exports, require, module){
 var convert = require('./convert');
 
 
@@ -540,3 +962,43 @@ module.exports = {
     }
 
 };
+});
+require.register("radioactive/src/convert.js", function(exports, require, module){
+// date and unit conversion utilities
+
+module.exports = {
+    E : function (exponent) {
+        return Math.pow(10, exponent);
+    },
+    years : function (years) {
+        return years;
+    },
+    days : function (days) {
+        return ( days / 365.25);
+    },
+    hours : function (hours) {
+        return ( hours / (24 * 365.25) );
+    },
+    minutes : function (minutes) {
+        return ( minutes / (60 * 24 * 365.25) );
+    },
+    seconds : function (seconds) {
+        return ( seconds / (60 * 60 * 24 * 365.25) );
+    },
+
+    moles : function (moles) {
+        return (moles * 6.02214179 * Math.pow(10, 23));
+    }
+};
+});
+require.alias("segmentio-extend/index.js", "radioactive/deps/extend/index.js");
+
+require.alias("radioactive/src/index.js", "radioactive/index.js");
+
+if (typeof exports == "object") {
+  module.exports = require("radioactive");
+} else if (typeof define == "function" && define.amd) {
+  define(function(){ return require("radioactive"); });
+} else {
+  window["radioactive"] = require("radioactive");
+}})();
