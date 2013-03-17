@@ -1,6 +1,7 @@
 // date and unit conversion utilities
 
 module.exports = {
+    
     E : function (exponent) {
         return Math.pow(10, exponent);
     },
