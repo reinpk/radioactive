@@ -967,6 +967,7 @@ require.register("radioactive/src/convert.js", function(exports, require, module
 // date and unit conversion utilities
 
 module.exports = {
+    
     E : function (exponent) {
         return Math.pow(10, exponent);
     },
