@@ -2,6 +2,7 @@
   "name"        : "radioactive",
   "version"     : "0.0.2",
   "author"      : "Peter Reinhardt <reinpk@gmail.com>",
+  "license"     : "MIT",
   "description" : "A library to model nuclear physics.",
   "keywords"    : [
     "nuclear physics",
@@ -20,11 +21,10 @@
   },
   "license" : "MIT",
   "devDependencies" : {
-    "mocha-phantomjs" : "1.1.1",
-    "connect"         : "2.7.1",
-    "uglify-js"       : ">= 1.3.4"
+    "uglify-js": ">= 1.3.4",
+    "mocha": "*",
+    "should": "*",
+    "underscore": "*"
   },
-  "dependencies": {
-    
-  }
+  "dependencies": {}
 }

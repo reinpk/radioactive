@@ -3,6 +3,7 @@
   "repo": "reinpk/radioactive",
   "description" : "A library to model nuclear physics.",
   "version": "0.0.2",
+  "license": "MIT",
   "keywords": [
     "nuclear physics",
     "radioactive waste",
@@ -15,13 +16,12 @@
     "matthewp/keys": "*",
     "avetisk/defaults": "*",
     "segmentio/extend": "*",
-    "reinpk/zeroes": "*"
+    "reinpk/zeroes": "*",
+    "reinpk/convert": "*",
+    "reinpk/isotope-data": "*"
   },
   "scripts": [
-    "src/index.js",
-    "src/radioactive.js",
-    "src/isotope-data.js",
-    "src/convert.js"
+    "index.js"
   ],
-  "main": "src/index.js"
+  "main": "index.js"
 }

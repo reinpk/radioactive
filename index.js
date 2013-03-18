@@ -1,24 +1,22 @@
+// radioactive.js
+//
+// (c) 2013 Peter Reinhardt
+// radioactive.js may be freely distributed under the MIT license.
+
 var extend      = require('extend'),
     clone       = require('clone'),
     map         = require('map'),
     keys        = require('keys'),
     defaults    = require('defaults'),
     zeroes      = require('zeroes'),
-    convert     = require('./convert'),
-    isotopeData = require('./isotope-data');
-
-
-module.exports = Radioactive;
-
+    convert     = require('convert'),
+    isotopeData = require('isotope-data');
 
 /**
  * Radioactive.
  */
 
-function Radioactive () {
-  var self = this;
-  this.VERSION = '0.0.2';
-}
+function Radioactive () {}
 
 
 /**
@@ -39,7 +37,7 @@ extend(Radioactive.prototype, {
      * [
      *     {
      *         fraction : 1,        // in the range [0, 1]
-     *         product  : 'Pu-239', // a compact isotope name
+     *         product  : 'Pu-239'  // a compact isotope name
      *     },
      *     ...
      * ]
@@ -254,3 +252,4 @@ extend(Radioactive.prototype, {
 });
 
 
+module.exports = new Radioactive();
