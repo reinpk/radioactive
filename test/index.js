@@ -1,10 +1,7 @@
 var radioactive = require('../radioactive.js'),
     _           = require('underscore');
 
-
 describe('radioactive.js', function () {
-
-    console.log(radioactive);
 
     // Decay Chains
     // ------------
@@ -12,7 +9,7 @@ describe('radioactive.js', function () {
     describe('decay chains', function () {
 
         var searchDecayTree = function (isotope, searchIsotope, searchDecayTree) {
-            var products = radioactive.decayProducts(isotope);
+            var products = radioactive.decay.products(isotope);
             if (products) {
                 for (var i = 0; i < products.length; i++) {
                     if (products[i].product === searchIsotope)
@@ -65,7 +62,7 @@ describe('radioactive.js', function () {
                 var initialConcentration = {};
                 initialConcentration[isotopeName] = 1;
 
-                var concentration = radioactive.decayConcentration(initialConcentration);
+                var concentration = radioactive.decay.concentration(initialConcentration);
 
                 var halflife = radioactive.isotopeData[isotopeName].halflife;
 

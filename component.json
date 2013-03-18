@@ -11,14 +11,9 @@
     "visualization"
   ],
   "dependencies": {
-    "component/clone": "*",
-    "component/map": "*",
-    "matthewp/keys": "*",
-    "avetisk/defaults": "*",
     "segmentio/extend": "*",
-    "reinpk/zeroes": "*",
-    "reinpk/convert": "*",
-    "reinpk/isotope-data": "*"
+    "reinpk/isotope-data": "*",
+    "reinpk/radioactive-decay": "*"
   },
   "scripts": [
     "index.js"

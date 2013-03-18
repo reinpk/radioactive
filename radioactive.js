@@ -207,268 +207,6 @@ require.relative = function(parent) {
 
   return localRequire;
 };
-require.register("component-type/index.js", function(exports, require, module){
-
-/**
- * toString ref.
- */
-
-var toString = Object.prototype.toString;
-
-/**
- * Return the type of `val`.
- *
- * @param {Mixed} val
- * @return {String}
- * @api public
- */
-
-module.exports = function(val){
-  switch (toString.call(val)) {
-    case '[object Function]': return 'function';
-    case '[object Date]': return 'date';
-    case '[object RegExp]': return 'regexp';
-    case '[object Arguments]': return 'arguments';
-    case '[object Array]': return 'array';
-    case '[object String]': return 'string';
-  }
-
-  if (val === null) return 'null';
-  if (val === undefined) return 'undefined';
-  if (val && val.nodeType === 1) return 'element';
-  if (val === Object(val)) return 'object';
-
-  return typeof val;
-};
-
-});
-require.register("component-clone/index.js", function(exports, require, module){
-
-/**
- * Module dependencies.
- */
-
-var type;
-
-try {
-  type = require('type');
-} catch(e){
-  type = require('type-component');
-}
-
-/**
- * Module exports.
- */
-
-module.exports = clone;
-
-/**
- * Clones objects.
- *
- * @param {Mixed} any object
- * @api public
- */
-
-function clone(obj){
-  switch (type(obj)) {
-    case 'object':
-      var copy = {};
-      for (var key in obj) {
-        if (obj.hasOwnProperty(key)) {
-          copy[key] = clone(obj[key]);
-        }
-      }
-      return copy;
-
-    case 'array':
-      var copy = new Array(obj.length);
-      for (var i = 0, l = obj.length; i < l; i++) {
-        copy[i] = clone(obj[i]);
-      }
-      return copy;
-
-    case 'regexp':
-      // from millermedeiros/amd-utils - MIT
-      var flags = '';
-      flags += obj.multiline ? 'm' : '';
-      flags += obj.global ? 'g' : '';
-      flags += obj.ignoreCase ? 'i' : '';
-      return new RegExp(obj.source, flags);
-
-    case 'date':
-      return new Date(obj.getTime());
-
-    default: // string, number, boolean, …
-      return obj;
-  }
-}
-
-});
-require.register("component-to-function/index.js", function(exports, require, module){
-
-/**
- * Expose `toFunction()`.
- */
-
-module.exports = toFunction;
-
-/**
- * Convert `obj` to a `Function`.
- *
- * @param {Mixed} obj
- * @return {Function}
- * @api private
- */
-
-function toFunction(obj) {
-  switch ({}.toString.call(obj)) {
-    case '[object Object]':
-      return objectToFunction(obj);
-    case '[object Function]':
-      return obj;
-    case '[object String]':
-      return stringToFunction(obj);
-    case '[object RegExp]':
-      return regexpToFunction(obj);
-    default:
-      return defaultToFunction(obj);
-  }
-}
-
-/**
- * Default to strict equality.
- *
- * @param {Mixed} val
- * @return {Function}
- * @api private
- */
-
-function defaultToFunction(val) {
-  return function(obj){
-    return val === obj;
-  }
-}
-
-/**
- * Convert `re` to a function.
- *
- * @param {RegExp} re
- * @return {Function}
- * @api private
- */
-
-function regexpToFunction(re) {
-  return function(obj){
-    return re.test(obj);
-  }
-}
-
-/**
- * Convert property `str` to a function.
- *
- * @param {String} str
- * @return {Function}
- * @api private
- */
-
-function stringToFunction(str) {
-  // immediate such as "> 20"
-  if (/^ *\W+/.test(str)) return new Function('_', 'return _ ' + str);
-
-  // properties such as "name.first" or "age > 18"
-  return new Function('_', 'return _.' + str);
-}
-
-/**
- * Convert `object` to a function.
- *
- * @param {Object} object
- * @return {Function}
- * @api private
- */
-
-function objectToFunction(obj) {
-  var match = {}
-  for (var key in obj) {
-    match[key] = typeof obj[key] === 'string'
-      ? defaultToFunction(obj[key])
-      : toFunction(obj[key])
-  }
-  return function(val){
-    if (typeof val !== 'object') return false;
-    for (var key in match) {
-      if (!(key in val)) return false;
-      if (!match[key](val[key])) return false;
-    }
-    return true;
-  }
-}
-
-});
-require.register("component-map/index.js", function(exports, require, module){
-
-/**
- * Module dependencies.
- */
-
-var toFunction = require('to-function');
-
-/**
- * Map the given `arr` with callback `fn(val, i)`.
- *
- * @param {Array} arr
- * @param {Function} fn
- * @return {Array}
- * @api public
- */
-
-module.exports = function(arr, fn){
-  var ret = [];
-  fn = toFunction(fn);
-  for (var i = 0; i < arr.length; ++i) {
-    ret.push(fn(arr[i], i));
-  }
-  return ret;
-};
-});
-require.register("matthewp-keys/index.js", function(exports, require, module){
-module.exports = Object.keys || function(obj){
-  var keys = [];
-
-  for (var key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      keys.push(key);
-    }
-  }
-
-  return keys;
-};
-});
-require.register("avetisk-defaults/index.js", function(exports, require, module){
-/**
- * Expose `defaults`.
- */
-module.exports = defaults;
-
-/**
- * Merge default values.
- *
- * @param {Object} dest
- * @param {Object} defaults
- * @return {Object}
- * @api public
- */
-function defaults (dest, defaults) {
-  for (var prop in defaults) {
-    if (! (prop in dest)) {
-      dest[prop] = defaults[prop];
-    }
-  }
-
-  return dest;
-};
-
-});
 require.register("segmentio-extend/index.js", function(exports, require, module){
 
 module.exports = function extend (object) {
@@ -485,41 +223,6 @@ module.exports = function extend (object) {
 
     return object;
 };
-});
-require.register("reinpk-zeroes/index.js", function(exports, require, module){
-/**
- * Create a zeroes array with the given `dimensions`.
- *
- * @param {Number|Array} dimensions
- * @param {Number} initialValue
- * @return {Array}
- * @api public
- */
-
-function zeroes (dimensions, initialValue) {
-  var array;
-
-  if (dimensions.length === 1) dimensions = dimensions[0];
-  if (initialValue === undefined) initialValue = 0;
-
-  // if it's a number, create a flat array of zeroes
-  if (typeof dimensions === 'number') {
-    array = new Array(dimensions);
-    for (var i = 0; i < dimensions; i += 1) {
-      array[i] = initialValue;
-    }
-  }
-  // else create an array of one-dimension-less arrays full of zeroes
-  else {
-    array = new Array(dimensions[0]);
-    for (var j = 0; j < dimensions[0]; j += 1) {
-      array[j] = zeroes(dimensions.slice(1));
-    }
-  }
-  return array;
-}
-
-module.exports = zeroes;
 });
 require.register("reinpk-convert/index.js", function(exports, require, module){
 var convert = {};
@@ -1100,11 +803,308 @@ module.exports = {
 
 };
 });
-require.register("radioactive/index.js", function(exports, require, module){
-// radioactive.js
+require.register("component-type/index.js", function(exports, require, module){
+
+/**
+ * toString ref.
+ */
+
+var toString = Object.prototype.toString;
+
+/**
+ * Return the type of `val`.
+ *
+ * @param {Mixed} val
+ * @return {String}
+ * @api public
+ */
+
+module.exports = function(val){
+  switch (toString.call(val)) {
+    case '[object Function]': return 'function';
+    case '[object Date]': return 'date';
+    case '[object RegExp]': return 'regexp';
+    case '[object Arguments]': return 'arguments';
+    case '[object Array]': return 'array';
+    case '[object String]': return 'string';
+  }
+
+  if (val === null) return 'null';
+  if (val === undefined) return 'undefined';
+  if (val && val.nodeType === 1) return 'element';
+  if (val === Object(val)) return 'object';
+
+  return typeof val;
+};
+
+});
+require.register("component-clone/index.js", function(exports, require, module){
+
+/**
+ * Module dependencies.
+ */
+
+var type;
+
+try {
+  type = require('type');
+} catch(e){
+  type = require('type-component');
+}
+
+/**
+ * Module exports.
+ */
+
+module.exports = clone;
+
+/**
+ * Clones objects.
+ *
+ * @param {Mixed} any object
+ * @api public
+ */
+
+function clone(obj){
+  switch (type(obj)) {
+    case 'object':
+      var copy = {};
+      for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          copy[key] = clone(obj[key]);
+        }
+      }
+      return copy;
+
+    case 'array':
+      var copy = new Array(obj.length);
+      for (var i = 0, l = obj.length; i < l; i++) {
+        copy[i] = clone(obj[i]);
+      }
+      return copy;
+
+    case 'regexp':
+      // from millermedeiros/amd-utils - MIT
+      var flags = '';
+      flags += obj.multiline ? 'm' : '';
+      flags += obj.global ? 'g' : '';
+      flags += obj.ignoreCase ? 'i' : '';
+      return new RegExp(obj.source, flags);
+
+    case 'date':
+      return new Date(obj.getTime());
+
+    default: // string, number, boolean, …
+      return obj;
+  }
+}
+
+});
+require.register("component-to-function/index.js", function(exports, require, module){
+
+/**
+ * Expose `toFunction()`.
+ */
+
+module.exports = toFunction;
+
+/**
+ * Convert `obj` to a `Function`.
+ *
+ * @param {Mixed} obj
+ * @return {Function}
+ * @api private
+ */
+
+function toFunction(obj) {
+  switch ({}.toString.call(obj)) {
+    case '[object Object]':
+      return objectToFunction(obj);
+    case '[object Function]':
+      return obj;
+    case '[object String]':
+      return stringToFunction(obj);
+    case '[object RegExp]':
+      return regexpToFunction(obj);
+    default:
+      return defaultToFunction(obj);
+  }
+}
+
+/**
+ * Default to strict equality.
+ *
+ * @param {Mixed} val
+ * @return {Function}
+ * @api private
+ */
+
+function defaultToFunction(val) {
+  return function(obj){
+    return val === obj;
+  }
+}
+
+/**
+ * Convert `re` to a function.
+ *
+ * @param {RegExp} re
+ * @return {Function}
+ * @api private
+ */
+
+function regexpToFunction(re) {
+  return function(obj){
+    return re.test(obj);
+  }
+}
+
+/**
+ * Convert property `str` to a function.
+ *
+ * @param {String} str
+ * @return {Function}
+ * @api private
+ */
+
+function stringToFunction(str) {
+  // immediate such as "> 20"
+  if (/^ *\W+/.test(str)) return new Function('_', 'return _ ' + str);
+
+  // properties such as "name.first" or "age > 18"
+  return new Function('_', 'return _.' + str);
+}
+
+/**
+ * Convert `object` to a function.
+ *
+ * @param {Object} object
+ * @return {Function}
+ * @api private
+ */
+
+function objectToFunction(obj) {
+  var match = {}
+  for (var key in obj) {
+    match[key] = typeof obj[key] === 'string'
+      ? defaultToFunction(obj[key])
+      : toFunction(obj[key])
+  }
+  return function(val){
+    if (typeof val !== 'object') return false;
+    for (var key in match) {
+      if (!(key in val)) return false;
+      if (!match[key](val[key])) return false;
+    }
+    return true;
+  }
+}
+
+});
+require.register("component-map/index.js", function(exports, require, module){
+
+/**
+ * Module dependencies.
+ */
+
+var toFunction = require('to-function');
+
+/**
+ * Map the given `arr` with callback `fn(val, i)`.
+ *
+ * @param {Array} arr
+ * @param {Function} fn
+ * @return {Array}
+ * @api public
+ */
+
+module.exports = function(arr, fn){
+  var ret = [];
+  fn = toFunction(fn);
+  for (var i = 0; i < arr.length; ++i) {
+    ret.push(fn(arr[i], i));
+  }
+  return ret;
+};
+});
+require.register("matthewp-keys/index.js", function(exports, require, module){
+module.exports = Object.keys || function(obj){
+  var keys = [];
+
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      keys.push(key);
+    }
+  }
+
+  return keys;
+};
+});
+require.register("avetisk-defaults/index.js", function(exports, require, module){
+/**
+ * Expose `defaults`.
+ */
+module.exports = defaults;
+
+/**
+ * Merge default values.
+ *
+ * @param {Object} dest
+ * @param {Object} defaults
+ * @return {Object}
+ * @api public
+ */
+function defaults (dest, defaults) {
+  for (var prop in defaults) {
+    if (! (prop in dest)) {
+      dest[prop] = defaults[prop];
+    }
+  }
+
+  return dest;
+};
+
+});
+require.register("reinpk-zeroes/index.js", function(exports, require, module){
+/**
+ * Create a zeroes array with the given `dimensions`.
+ *
+ * @param {Number|Array} dimensions
+ * @param {Number} initialValue
+ * @return {Array}
+ * @api public
+ */
+
+function zeroes (dimensions, initialValue) {
+  var array;
+
+  if (dimensions.length === 1) dimensions = dimensions[0];
+  if (initialValue === undefined) initialValue = 0;
+
+  // if it's a number, create a flat array of zeroes
+  if (typeof dimensions === 'number') {
+    array = new Array(dimensions);
+    for (var i = 0; i < dimensions; i += 1) {
+      array[i] = initialValue;
+    }
+  }
+  // else create an array of one-dimension-less arrays full of zeroes
+  else {
+    array = new Array(dimensions[0]);
+    for (var j = 0; j < dimensions[0]; j += 1) {
+      array[j] = zeroes(dimensions.slice(1));
+    }
+  }
+  return array;
+}
+
+module.exports = zeroes;
+});
+require.register("reinpk-radioactive-decay/index.js", function(exports, require, module){
+// RadioactiveDecay
 //
 // (c) 2013 Peter Reinhardt
-// radioactive.js may be freely distributed under the MIT license.
+// RadioactiveDecay may be freely distributed under the MIT license.
 
 var extend      = require('extend'),
     clone       = require('clone'),
@@ -1116,19 +1116,17 @@ var extend      = require('extend'),
     isotopeData = require('isotope-data');
 
 /**
- * Radioactive.
+ * RadioactiveDecay.
  */
 
-function Radioactive () {}
+function RadioactiveDecay () {}
 
 
 /**
- * Extend the Radioactive prototype.
+ * Extend the RadioactiveDecay prototype.
  */
 
-extend(Radioactive.prototype, {
-
-    isotopeData : isotopeData,
+extend(RadioactiveDecay.prototype, {
 
     /**
      * Get the decay products for the given isotope.
@@ -1145,7 +1143,7 @@ extend(Radioactive.prototype, {
      *     ...
      * ]
      */
-    decayProducts : function (isotope) {
+    products : function (isotope) {
         var datum = isotopeData[isotope];
         if (datum && datum.product)
             return [{
@@ -1163,22 +1161,22 @@ extend(Radioactive.prototype, {
      *
      * @return {Array} An array of all the compact isotope names in the resulting chain.
      */
-    decayChain : function (isotope) {
+    chain : function (isotope) {
         var chain = [ isotope ];
-        var decayProduct = this.decayProducts(isotope);
+        var product = this.products(isotope);
 
-        while (decayProduct) {
+        while (product) {
             // choose first decay product
-            decayProduct = decayProduct[0];
+            product = product[0];
 
             // exit if this isotope is stable
-            if (!isotopeData[decayProduct.product]) break;
+            if (!isotopeData[product.product]) break;
 
             // add this isotope to the chain
-            chain.push(decayProduct.product);
+            chain.push(product.product);
 
             // get next decay product
-            decayProduct = this.decayProducts(decayProduct.product);
+            product = this.products(product.product);
         }
 
         return chain;
@@ -1201,9 +1199,9 @@ extend(Radioactive.prototype, {
      * charges (kilograms) of that isotope.
      * 
      */
-    decayChainProfile : function (isotope, charge) {
+    chainProfile : function (isotope, charge) {
 
-        var chain = this.decayChain(isotope);
+        var chain = this.chain(isotope);
         var C = new Array(chain.length);
 
         // calculate lambda coefficients
@@ -1288,14 +1286,14 @@ extend(Radioactive.prototype, {
      *     'total   : 12345 // kilograms
      * }
      */
-    decayConcentration : function (charge) {
+    concentration : function (charge) {
 
         var chargeClone = clone(charge);
         var isotopesAtStart = keys(chargeClone);
 
         var self = this;
         var profiles = map(isotopesAtStart, function (isotope) {
-            return self.decayChainProfile(isotope, chargeClone);
+            return self.chainProfile(isotope, chargeClone);
         });
 
         // Merge the concentrations from each series
@@ -1329,14 +1327,14 @@ extend(Radioactive.prototype, {
      *     'total   : 12345 // becquerels
      * }
      */
-    decayRadioactivity : function (charge) {
+    radioactivity : function (charge) {
 
         var chargeClone = clone(charge);
         var isotopesAtStart = keys(chargeClone);
 
         var self = this;
         var profiles = map(isotopesAtStart, function (isotope) {
-            return self.decayChainProfile(isotope, chargeClone);
+            return self.chainProfile(isotope, chargeClone);
         });
 
         // Merge the radioactivity from each series
@@ -1355,29 +1353,71 @@ extend(Radioactive.prototype, {
 });
 
 
+module.exports = new RadioactiveDecay();
+
+});
+require.register("radioactive/index.js", function(exports, require, module){
+// radioactive.js
+//
+// (c) 2013 Peter Reinhardt
+// radioactive.js may be freely distributed under the MIT license.
+
+var extend      = require('extend'),
+    isotopeData = require('isotope-data'),
+    decay       = require('radioactive-decay');
+
+/**
+ * Radioactive.
+ */
+
+function Radioactive () {}
+
+
+/**
+ * Extend the Radioactive prototype.
+ */
+
+extend(Radioactive.prototype, {
+
+    isotopeData : isotopeData,
+
+    decay       : decay
+
+});
+
+
 module.exports = new Radioactive();
 
 });
-require.alias("component-clone/index.js", "radioactive/deps/clone/index.js");
-require.alias("component-type/index.js", "component-clone/deps/type/index.js");
-
-require.alias("component-map/index.js", "radioactive/deps/map/index.js");
-require.alias("component-to-function/index.js", "component-map/deps/to-function/index.js");
-
-require.alias("matthewp-keys/index.js", "radioactive/deps/keys/index.js");
-require.alias("matthewp-keys/index.js", "radioactive/deps/keys/index.js");
-require.alias("matthewp-keys/index.js", "matthewp-keys/index.js");
-
-require.alias("avetisk-defaults/index.js", "radioactive/deps/defaults/index.js");
-
 require.alias("segmentio-extend/index.js", "radioactive/deps/extend/index.js");
-
-require.alias("reinpk-zeroes/index.js", "radioactive/deps/zeroes/index.js");
-
-require.alias("reinpk-convert/index.js", "radioactive/deps/convert/index.js");
 
 require.alias("reinpk-isotope-data/index.js", "radioactive/deps/isotope-data/index.js");
 require.alias("reinpk-convert/index.js", "reinpk-isotope-data/deps/convert/index.js");
+
+require.alias("reinpk-radioactive-decay/index.js", "radioactive/deps/radioactive-decay/index.js");
+require.alias("reinpk-radioactive-decay/index.js", "radioactive/deps/radioactive-decay/index.js");
+require.alias("component-clone/index.js", "reinpk-radioactive-decay/deps/clone/index.js");
+require.alias("component-type/index.js", "component-clone/deps/type/index.js");
+
+require.alias("component-map/index.js", "reinpk-radioactive-decay/deps/map/index.js");
+require.alias("component-to-function/index.js", "component-map/deps/to-function/index.js");
+
+require.alias("matthewp-keys/index.js", "reinpk-radioactive-decay/deps/keys/index.js");
+require.alias("matthewp-keys/index.js", "reinpk-radioactive-decay/deps/keys/index.js");
+require.alias("matthewp-keys/index.js", "matthewp-keys/index.js");
+
+require.alias("avetisk-defaults/index.js", "reinpk-radioactive-decay/deps/defaults/index.js");
+
+require.alias("segmentio-extend/index.js", "reinpk-radioactive-decay/deps/extend/index.js");
+
+require.alias("reinpk-zeroes/index.js", "reinpk-radioactive-decay/deps/zeroes/index.js");
+
+require.alias("reinpk-convert/index.js", "reinpk-radioactive-decay/deps/convert/index.js");
+
+require.alias("reinpk-isotope-data/index.js", "reinpk-radioactive-decay/deps/isotope-data/index.js");
+require.alias("reinpk-convert/index.js", "reinpk-isotope-data/deps/convert/index.js");
+
+require.alias("reinpk-radioactive-decay/index.js", "reinpk-radioactive-decay/index.js");
 
 require.alias("radioactive/index.js", "radioactive/index.js");
 
