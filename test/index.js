@@ -59,15 +59,14 @@ describe('radioactive.js', function () {
 
             _.each(_.keys(radioactive.isotopeData), function (isotopeName) {
 
-                var initialConcentration = {};
-                initialConcentration[isotopeName] = 1;
+                var charge = {};
+                charge[isotopeName] = 1;
 
-                var concentration = radioactive.decay.concentration(initialConcentration);
+                var mass = radioactive.decay.mass(charge);
 
                 var halflife = radioactive.isotopeData[isotopeName].halflife;
-
                 for (var halflives = 0; halflives < 5; halflives++) {
-                    var remaining = concentration(halflife*halflives)[isotopeName];
+                    var remaining = mass(halflife*halflives)[isotopeName];
                     var remainingExpected = Math.pow(0.5, halflives);
 
                     var error = Math.abs( (remaining - remainingExpected) / remainingExpected );
@@ -77,7 +76,30 @@ describe('radioactive.js', function () {
             });
         });
 
-        it('has expected decay rate with child isotope in chain');
+        it('has expected decay rate with child isotope in chain', function () {
+
+            // Po-216 (0.1 second halflife) decays to Pb-212 (11 hour halflife)
+            // We expect the conversion to Pb-212 to be pretty complete after
+            // 5 seconds but basically all of the Pb-212 should still be around
+
+            // start with 1000 kg of Polonium-216
+            var startingMass = 1000;
+            var mass = radioactive.decay.mass({
+                'Po-216' : startingMass
+            });
+
+            // 5 seconds later...
+            var after5Seconds = 5 / (365.25 * 24 * 60 * 60);
+            var remainingPolonium = mass(after5Seconds)['Po-216'];
+            remainingPolonium.should.be.lessThan(0.0000001);
+
+            var freshLead = mass(after5Seconds)['Pb-212'];
+            var expectedLead = startingMass / radioactive.isotopeData['Po-216'].molarMass * radioactive.isotopeData['Pb-212'].molarMass;
+
+            var error = Math.abs( (freshLead - expectedLead) / expectedLead );
+            error.should.be.lessThan(0.0001);
+
+        });
     });
 
 });
