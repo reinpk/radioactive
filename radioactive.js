@@ -1283,6 +1283,22 @@ function zeroes (dimensions, initialValue) {
 
 module.exports = zeroes;
 });
+require.register("reinpk-error-fraction/index.js", function(exports, require, module){
+/**
+ * Calculates the error fraction for a measured and expected value.
+ *
+ * @param {Number} expected
+ * @param {Number} measured
+ * @return {Number} the error fraction
+ * @api public
+ */
+
+function errorFraction (expected, measured) {
+  return Math.abs( (measured - expected) / expected );
+}
+
+module.exports = errorFraction;
+});
 require.register("reinpk-radioactive-decay/index.js", function(exports, require, module){
 // RadioactiveDecay
 //
@@ -1536,7 +1552,6 @@ extend(RadioactiveDecay.prototype, {
                 var seriesBq = profiles[i].radioactivity(years);
                 Bq = defaults(Bq, seriesBq);
                 Bq.total += seriesBq.total;
-                console.log(seriesBq);
             }
             return Bq;
         };
@@ -1606,6 +1621,8 @@ require.alias("avetisk-defaults/index.js", "reinpk-radioactive-decay/deps/defaul
 require.alias("segmentio-extend/index.js", "reinpk-radioactive-decay/deps/extend/index.js");
 
 require.alias("reinpk-zeroes/index.js", "reinpk-radioactive-decay/deps/zeroes/index.js");
+
+require.alias("reinpk-error-fraction/index.js", "reinpk-radioactive-decay/deps/error-fraction/index.js");
 
 require.alias("reinpk-convert/index.js", "reinpk-radioactive-decay/deps/convert/index.js");
 
