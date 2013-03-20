@@ -1328,6 +1328,12 @@ function RadioactiveDecay () {}
 
 extend(RadioactiveDecay.prototype, {
 
+    radiationLevels : {
+        // Calculated from http://www.physics.isu.edu/radinf/natural.htm as
+        // 653 GBq / mi^2 * ft ==  524 Bq / kg
+        soil : 524
+    },
+
     /**
      * Get the decay products for the given isotope.
      *
