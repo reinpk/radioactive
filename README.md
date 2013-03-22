@@ -6,19 +6,92 @@ radioactive.js
 
 A library to model nuclear physics in javascript. Intended for building visualizations and interactive demonstrations.
 
-Currently the library can model:
-- decay and radioactivity of nuclear waste
+## Usage
 
-## Getting Started
-TODO
+### Decay
+The decay module exposes four main functions.
 
-## Future Improvements
+#### products(isotope)
+Get the decay products for the given `isotope`. The `isotope` parameter is a compact name like `Pu-239`.
 
-It would be cool to add the data and physics required for modeling:
-- fission isotope spread
-- neutron capture
-- different varieties of decay radiation (alpha, beta, gamma)
-- energies in decay, capture and fission reactions
+```javascript
+radioactive.decay.products('Pu-239');
+```
+
+returns an array of products produced in the decay process:
+
+```javascript
+[
+    {
+        fraction : 1,       // in the range [0, 1]
+        product  : 'U-235'  // a compact isotope name
+    },
+    ...
+]
+```
+
+#### chain(isotope)
+Get the complete decay chain for the given `isotope`. The `isotope` parameter is a compact name like `Y-99`.
+
+```javascript
+radioactive.decay.chain('Y-99');
+```
+
+returns an array of products produced in the decay process:
+
+```javascript
+["Y-99", "Zr-99", "Nb-99m", "Nb-99", "Mo-99m2", "Mo-99m1", "Mo-99", "Tc-99m", "Tc-99"]
+```
+
+#### mass(charge)
+Get a decay profile of isotope mass for a starting `charge` of isotopes. The `charge` parameter is a dictionary of compact isotope names (like `Pu-239') to initial charges (kilograms) of that isotope.
+
+```javascript
+radioactive.decay.mass({
+    'Y-99' : 1 //kilograms
+});
+```
+
+returns a function that can be passed `time` in years. That function will return a dictionary of isotope masses remaining at that time:
+
+```javascript
+{
+    'Y-99'  : 0.02, // kilograms
+    'Zr-99' : 0.8, // kilograms
+    ...other isotopes...
+    'total   : 1   // kilograms
+}
+```
+
+#### radioactivity(charge)
+Get a decay profile of radioactivity for a starting `charge` of isotopes. The `charge` parameter is a dictionary of compact isotope names (like `Pu-239') to initial charges (kilograms) of that isotope.
+
+```javascript
+radioactive.decay.radioactivity({
+    'Y-99' : 1 //kilograms
+});
+```
+
+returns a function that can be passed `time` in years. That function will return a dictionary of isotope masses remaining at that time:
+
+```javascript
+{
+    'Y-99' : 5510123, // becquerels
+    ...other isotopes...
+    'total : 14310123 // becquerels
+}
+```
+
+### Fission & Neutron Capture
+This module isn't implemented yet. Simulating fission and neutron capture is a real-time process, and needs totally different math & datasets.
+
+Things this module will need to know about
+
++ Fission isotope spread
++ Neutron absorption probabilities for different energies and istopes
++ Energies and products released
++ Geometry of the situation
++ Accompanying thermal model would make it actually useful
 
 Contributions are welcome!
 
