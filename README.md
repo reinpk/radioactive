@@ -9,7 +9,6 @@ A library to model nuclear physics in javascript. Intended for building visualiz
 ## Usage
 
 ### Decay
-The decay module exposes four main functions.
 
 #### products(isotope)
 Get the decay products for the given `isotope`. The `isotope` parameter is a compact name like `Pu-239`.
