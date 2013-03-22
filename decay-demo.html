@@ -11,30 +11,22 @@
     <![endif]-->
 
     <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min.js"></script>
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.9/backbone-min.js"></script>
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.0.1/d3.v3.min.js"></script>
-    <script type="text/javascript" src="https://raw.github.com/reinpk/radioactive/master/src/radioactive.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/2.3.5/highcharts.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+    
+    <script type="text/javascript" src="http://rein.pk/javascripts/libs/radioactive/radioactive.js"></script>
     <script type="text/javascript" src="scripts/decay-demo.js"></script>
   </head>
   <body>
     <a href="https://github.com/reinpk/radioactive"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
     <div class="wrapper">
       <header class="demo">
-        <h1>Radioactive Waste for Different Reactors</h1>
+        <h1>Radioactive Waste</h1>
         <p>A demo of radioactive.js</p>
       </header>
 
-      <div class="demo-graph">
-        <p>This plot compares waste radiation for three different reactors over the next 10 billion years.</p>
-        <svg class="demo-graph-svg"></svg>
+      <div id="demo-graph" class="demo-graph">
       </div>
-
-      <p><strong>&mdash; Waste radiation from a standard Pressurized Water Reactor.</strong> The mixture of waste isotopes was determined from measurements at <a href="http://www.oecd-nea.org/sfcompo/Ver.2/search/search.pl?rosin=Obrigheim&cell=BE124&pin=G7&axis=2315">this German reactor</a>.</p>
-
-      <p><strong><span style="color: #99FF00;">&mdash;</span> Waste radiation from a reactor with "three times less waste" than a PWR.</strong> This illustrates how useless the statement "three times less waste" is. The mixture of waste isotopes used here was determined from measurements at the <a href="http://www.oecd-nea.org/sfcompo/Ver.2/search/search.pl?rosin=Obrigheim&cell=BE124&pin=G7&axis=2315">same German reactor</a>, but the amount of uranium-238 waste (more than 90% of the waste by weight) was reduced by a factor of three.</p>
-
-      <p><strong><span style="color: #FF9900;">&mdash;</span> Waste radiation from a hypothetical <a href="http://en.wikipedia.org/wiki/Generation_IV_reactor#Reactor_types">Actinide Burner Reactor</a>.</strong> The starting mixture of waste isotopes was taken from measurements at the <a href="http://www.oecd-nea.org/sfcompo/Ver.2/search/search.pl?rosin=Obrigheim&cell=BE124&pin=G7&axis=2315">same German reactor</a>, but with all actinides heavier than uranium removed, because they would be used up in the reactor.</p>
 
       <hr>
       <footer>

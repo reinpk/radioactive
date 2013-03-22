@@ -1,31 +1,187 @@
-// Data
-// ----
+function renderRadioactivityPlot (container, series, units) {
+    var chart = new Highcharts.Chart({
+            
+        chart: {
+            renderTo: container
+        },
 
-var E = function (exponent) {
-    return Math.pow(10, exponent);
-};
+        credits : {
+            enabled: false
+        },
+        
+        title: {
+            text: ''
+        },
 
-/*
-Thesis pg 3 has graph
-http://trace.tennessee.edu/cgi/viewcontent.cgi?article=1838&context=utk_graddiss
+        legend : {
+            enabled: false
+        },
+        
+        xAxis: {
+            title: {
+                enabled: true,
+                text: 'Years',
+                style : {
+                    color : '#57534a'
+                }
+            },
+            type: 'logarithmic',
+            tickInterval: 1
+        },
+        
+        yAxis: {
+            title: {
+                text: 'Radioactivity ('+units+')',
+                style : {
+                    color : '#57534a'
+                }
+            },
+            type: 'logarithmic',
+            minorTickInterval: 1,
+            gridLineWidth: 0,
+            minorGridLineWidth: 0,
+            min: 100000
+        },
 
-Has typical LWR isotope data
-http://radchem.nevada.edu/docs/course%20reading/radiochem%20nucl%20power%20reactor.pdf
+        plotOptions: {
+            line : {
+                marker : {
+                    enabled: false
+                },
+                lineWidth: 3
+            },
+            series : {
+                shadow: false
+            }
+        },
+        
+        tooltip: {
+            formatter    : function () {
+                console.log(this.point);
+                var x = numberFormat(this.point.x);
+                var y = numberFormat(this.point.y, 'Bq');
+                return ('<b>'+this.series.name+'</b><br />' + y + ' after ' + x + ' years');
+            }
+        },
+        
+        series: series
+    });   
+}
 
-OECD NEA Spent Fuel Isotopic Composition Database
-http://www.oecd-nea.org/sfcompo/
+function numberFormat (number, unit) {
+    var num = Math.abs(number);
+    if (num > 1000000000000000)
+        return ( Highcharts.numberFormat((number/1000000000000000), 0) + (unit ? ' E'+unit : 'Q'));
+    else if (num > 1000000000000)
+        return ( Highcharts.numberFormat((number/1000000000000), 0) + (unit ? ' P'+unit : 'T'));
+    else if (num > 1000000000)
+        return ( Highcharts.numberFormat((number/1000000000), 0) + (unit ? ' G'+unit : 'B'));
+    else if (num > 1000000)
+        return ( Highcharts.numberFormat((number/1000000), 0) + (unit ? ' M'+unit : 'M'));
+    else if (num > 1000)
+        return ( Highcharts.numberFormat((number/1000), 0) + (unit ? ' K'+unit : 'K'));
+    else if (num < 1000)
+        return Highcharts.numberFormat(number, 0);
 
-Recommended datasets from ORNL
-http://www.ornl.gov/~webworks/cppr/y2002/rpt/93933.pdf
-*/
+}
 
-var reactors = [
-    {
-        name : 'Pressurized Water',
-        slug : 'pressurized-water',
-        color : '#222222',
-        wasteProfile : {
-            // units are kg/MTU initial
+function massOfCharge (charge) {
+    return _.reduce(_.keys(charge), function (memo, isotopeName) {
+        return (memo + charge[isotopeName]);
+    }, 0);
+}
+
+function generateRadioactivityTimeSeries (charge) {
+    var backgroundSoilRadiation = radioactive.decay.radiationLevels.soil * massOfCharge(charge);
+    var backgroundCutoff = backgroundSoilRadiation / 500;
+
+    var radioactivity = radioactive.decay.radioactivity(charge);
+
+    var data = [];
+    var tpow = 0;
+    var lastTotal = backgroundCutoff * 2;
+    while (lastTotal > backgroundCutoff) {
+        var t = Math.pow(10, tpow);
+        for (var mult = 1; mult < 10; mult+=2) {
+            var profile = radioactivity(mult*t);
+            data.push([ mult*t, profile.total ]);
+        }
+
+        lastTotal = _.last(data)[1];
+        tpow++;
+    }
+    data = _.filter(data, function (datum) {
+        return (datum[1] >= backgroundCutoff);
+    });
+
+    return data;
+}
+
+function generateBackgroundRadioactivityTimeSeries (mass, years) {
+    var backgroundSoilRadiation = radioactive.decay.radiationLevels.soil * mass;
+
+    var data = [];
+    var tpow = 0;
+    var t = Math.pow(10, tpow);
+    while (t < years) {
+        t = Math.pow(10, tpow);
+        for (var mult = 1; mult < 10; mult+=2) {
+            data.push([ mult*t, backgroundSoilRadiation ]);
+        }
+        tpow++;
+    }
+
+    return data;
+}
+
+
+
+
+$(function () {
+
+    // Basic Datasets
+    // --------------
+
+    var naturalSoil = {
+        name  : 'Natural Soil',
+        data  : generateBackgroundRadioactivityTimeSeries(1000, 10000000000),
+        color : '#AAA',
+        dashStyle: 'Dot'
+    };
+    var uranium238 = {
+        name  : 'Uranium-238',
+        data  : generateRadioactivityTimeSeries({
+            'U-238'  : 1000.0 // kilograms
+        }),
+        color : '#427e80'
+    };
+    var cesium134 = {
+        name  : 'Cesium-134',
+        data  : generateRadioactivityTimeSeries({
+            'Cs-134' : 10.0 // kilograms
+        }),
+        color : '#e14e0c'
+    };
+    var plutonium239 = {
+        name  : 'Plutonium-239',
+        data  : generateRadioactivityTimeSeries({
+            'Pu-239'  : 348.0 // kilograms
+        }),
+        color : '#a0586c'
+    };
+
+    // Real Reactor Profiles
+    // ---------------------
+
+    var E = function (exp) {
+        return Math.pow(10, exp);
+    };
+
+    var pressurizedWaterReactor = {
+        name  : 'Pressurized Water Reactor',
+        data  : generateRadioactivityTimeSeries({
+            // units are kg/MTU initial * 15 tons/year / 1.344 GWe
+            // so end units are kg/GWe/year
             'Am-241' : 1.400*E(-1) * 15 / 1.344,
             'Cm-242' : 1.190*E(-2) * 15 / 1.344,
             'Cm-244' : 1.650*E(-2) * 15 / 1.344,
@@ -40,14 +196,14 @@ var reactors = [
             'U-235'  : 1.010*E(1) * 15 / 1.344,
             'U-236'  : 4.050*E(0) * 15 / 1.344,
             'U-238'  : 9.480*E(2) * 15 / 1.344
-        },
-        wasteDataSource : 'http://www.oecd-nea.org/sfcompo/Ver.2/search/search.pl?rosin=Obrigheim&cell=BE124&pin=G7&axis=2315'
-    },
-    {
-        name : 'Boiling Water',
-        slug : 'boiling-water',
-        color : '#99FF00',
-        wasteProfile : {
+        }),
+        color  : '#211f18',
+        source : 'http://www.oecd-nea.org/sfcompo/Ver.2/search/search.pl?rosin=Obrigheim&cell=BE124&pin=G7&axis=2315'
+    };
+
+    var boilingWaterReactor = {
+        name  : 'Boiling Water Reactor',
+        data  : generateRadioactivityTimeSeries({
             // units are kg/MTU initial * 15 tons/year / 1.344 GWe
             // so end units are kg/year/GWe
             'Am-241' : 6.630*E(-1) * 15 / 1.344,
@@ -65,22 +221,16 @@ var reactors = [
             'U-235'  : 6.500*E(0) * 15 / 1.344,
             'U-236'  : 3.260*E(0) * 15 / 1.344,
             'U-238'  : 9.520*E(2) * 15 / 1.344
-        },
-        wasteDataSource : 'http://www.oecd-nea.org/sfcompo/Ver.2/search/search.pl?rosin=Gundremmingen&cell=B23&pin=A1&axis=2680'
-    },
-    {
-        name : 'Heavy Water',
-        slug : 'heavy-water',
-        color : '#FFCC00',
-        wasteProfile : [],
-        wasteDataSource : 'https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=3&ved=0CDoQFjAC&url=http%3A%2F%2Fwww.scirp.org%2Fjournal%2FPaperDownload.aspx%3FDOI%3D10.4236%2Fwjnst.2011.12006&ei=_m3zUODYH-OXiAKqkYG4CQ&usg=AFQjCNEevchP7rDdn-83oQXxqBkRz6YHEA'
-    },
-    {
+        }),
+        color  : '#99FF00',
+        source : 'http://www.oecd-nea.org/sfcompo/Ver.2/search/search.pl?rosin=Gundremmingen&cell=B23&pin=A1&axis=2680'
+    };
+
+    var hypotheticalSuperEfficentReactor = {
         name : 'Hypothetical Super Efficient Reactor',
-        slug : 'super-efficient',
-        color : '#99FF00',
-        wasteProfile : {
-            // units are kg/MTU initial
+        data  : generateRadioactivityTimeSeries({
+            // units are kg/MTU initial * 15 tons/year / 1.344 GWe
+            // so end units are kg/year/GWe
             'Am-241' : 1.400*E(-1) * 15 / 1.344,
             'Cm-242' : 1.190*E(-2) * 15 / 1.344,
             'Cm-244' : 1.650*E(-2) * 15 / 1.344,
@@ -95,246 +245,32 @@ var reactors = [
             'U-235'  : 1.010*E(1) * 15 / 1.344,
             'U-236'  : 4.050*E(0) * 15 / 1.344,
             'U-238'  : 3.480*E(2) * 15 / 1.344
-        },
-        wasteDataSource : 'http://www.oecd-nea.org/sfcompo/Ver.2/search/search.pl?rosin=Gundremmingen&cell=B23&pin=A1&axis=2680'
-    },
-    {
+        }),
+        color : '#9cba18',
+        source : 'http://www.oecd-nea.org/sfcompo/Ver.2/search/search.pl?rosin=Gundremmingen&cell=B23&pin=A1&axis=2680'
+    };
+
+    var hypotheticalActinideBurnerReactor = {
         name : 'Hypothetical Actinide Burner',
-        slug : 'molten-salt',
-        color : '#FF9900',
-        wasteProfile : {
-            // units are kg/MTU initial
-            'Cs-134' : 9.540*E(-2) * 15 / 1.344,
+        color : '#4bbc7e',
+        data  : generateRadioactivityTimeSeries({
+            // units are kg/MTU initial * 15 tons/year / 1.344 GWe
+            // so end units are kg/year/GWe
+            'Am-241' : 1.400*E(-1) * 15 / 1.344,
+            'Cm-242' : 1.190*E(-2) * 15 / 1.344,
+            'Cm-244' : 1.650*E(-2) * 15 / 1.344,
+            'Cs-134' : 9.540*E(0) * 15 / 1.344,
             'Cs-137' : 1.000*E(0) * 15 / 1.344,
             'Eu-154' : 1.970*E(-2) * 15 / 1.344,
             'U-235'  : 1.010*E(1) * 15 / 1.344,
             'U-236'  : 4.050*E(0) * 15 / 1.344,
-            'U-238'  : 3.480*E(2) * 15 / 1.344
-        },
-        wasteDataSource : 'http://www.ornl.gov/~webworks/cppr/y2001/pres/118013.pdf'
-    },
-    {
-        name : 'Cesium-134',
-        slug : 'cesium-134',
-        color : '#FF0000',
-        wasteProfile : {
-            'Cs-134' : 1.000*E(0) * 15 / 1.344,
-        }
-    },
-    {
-        name : 'Plutonium-239',
-        slug : 'plutonium-239',
-        color : '#FF9900',
-        wasteProfile : {
-            'Pu-239'  : 3.480*E(1) * 15 / 1.344
-        }
-    },
-    {
-        name : 'Uranium-238',
-        slug : 'uranium-238',
-        color : '#0066FF',
-        wasteProfile : {
-            'U-238'  : 3.480*E(2) * 15 / 1.344
-        }
-    }
-];
+            'U-238'  : 9.480*E(2) * 15 / 1.344
+        }),
+        source : 'http://www.ornl.gov/~webworks/cppr/y2001/pres/118013.pdf'
+    };
 
+    var units  = 'becquerels';
+    var series = [naturalSoil, uranium238, cesium134, plutonium239, pressurizedWaterReactor];
+    renderRadioactivityPlot('demo-graph', series, units);
 
-
-// Backbone
-// --------
-
-var DecayDemo = {};
-
-
-// Models
-
-DecayDemo.ReactorModel = Backbone.Model.extend({
-    defaults : {
-        name          : null,
-        slug          : null,
-        color         : null,
-        wasteProfile  : null
-    }
-});
-
-DecayDemo.ReactorCollection = Backbone.Collection.extend({
-    model : DecayDemo.ReactorModel
-});
-
-
-// Views
-
-DecayDemo.ResultsView = Backbone.View.extend({
-
-    initialize : function (options) {
-        // Real reactors
-        this.onReactorSelected(options.collection.at(0));
-        this.onReactorSelected(options.collection.at(3));
-        this.onReactorSelected(options.collection.at(4));
-        
-        // Simple single isotopes
-        // this.onReactorSelected(options.collection.at(5));
-        // this.onReactorSelected(options.collection.at(6));
-        // this.onReactorSelected(options.collection.at(7));
-    },
-
-    onReactorSelected : function (reactorModel) {
-        this.model = reactorModel;
-        this.render();
-    },
-
-    render : function () {
-        this.renderGraph();
-        return this;
-    },
-
-    renderGraph : function () {
-
-        var backgroundSoilRadiation = 130600000;
-        var backgroundCutoff = backgroundSoilRadiation / 500;
-
-        var wasteProfile = this.model.get('wasteProfile');
-        var decayProfile = nuclear.decayProfile(wasteProfile);
-
-        var data = [];
-        var tpow = 0;
-        var lastTotal = backgroundCutoff * 2;
-        while (lastTotal > backgroundCutoff) {
-            var t = Math.pow(10, tpow);
-            for (var mult = 1; mult < 10; mult+=2) {
-                var profile = decayProfile.radioactivity(mult*t);
-                data.push({
-                    t  : mult*t,
-                    bq : profile.total
-                });
-            }
-
-            lastTotal = _.last(data).bq;
-            tpow++;
-        }
-        data = _.filter(data, function (datum) {
-            return (datum.bq >= backgroundCutoff);
-        });
-
-        var svg = d3.select('svg');
-
-        var xScale = d3.scale.linear()
-            .domain([0, Math.log(20000000000)])
-            .range([100, 580]);
-
-        var yScale = d3.scale.linear()
-            .domain([Math.log(backgroundCutoff), 40])
-            .range([250, 5]);
-
-        var line = d3.svg.line()
-            .x(function (datum) {
-              return Math.floor(xScale(Math.log(datum.t)));
-            })
-            .y(function (datum) {
-              return Math.floor(yScale(Math.log(datum.bq)));
-            })
-            .interpolate('cubic');
-
-        svg.append('path')
-            .attr('d', line(data))
-            .style('stroke', this.model.get('color'));
-
-        // Calculated from http://www.physics.isu.edu/radinf/natural.htm
-        // by using an equivalent mass of soil as the input waste mass.
-        var soilbackgroundLine = d3.svg.line()
-            .x(function (datum) {
-              return Math.floor(xScale(Math.log(datum.t)));
-            })
-            .y(function (datum) {
-              return Math.floor(yScale(Math.log(backgroundSoilRadiation)));
-            })
-            .interpolate('cubic');
-
-
-        svg.append('path')
-            .attr('class', 'soil-background')
-            .attr('d', soilbackgroundLine(data));
-
-        svg.append('rect')
-            .attr('class', 'axis')
-            .attr('x', xScale(0))
-            .attr('y', 0)
-            .attr('width', 1)
-            .attr('height', yScale(Math.log(backgroundCutoff)));
-        svg.append('rect')
-            .attr('class', 'axis')
-            .attr('x', xScale(0))
-            .attr('y', yScale(Math.log(backgroundCutoff)))
-            .attr('width', 580)
-            .attr('height', 1);
-
-        var tickData = [
-            { y : 1, label : 'Start' },
-            { y : 10, label : '10 years' },
-            { y : 1000, label : '1000 years' },
-            { y : 1000000, label : '1m years' },
-            { y : 10000000000, label : '10B years'}
-        ];
-        var ticks = svg.selectAll('rect.tick').data(tickData);
-        ticks.enter().append('rect')
-            .attr('class', 'tick')
-            .attr('x', function (datum) {
-                return Math.round(xScale(Math.log(datum.y)));
-            })
-            .attr('y', yScale(Math.log(backgroundCutoff)))
-            .attr('width', 1)
-            .attr('height', 3);
-
-        var tickLabels = svg.selectAll('text.tick-label').data(tickData);
-        tickLabels.enter().append('text')
-            .attr('class', 'tick-label')
-            .attr('x', function (datum) {
-                return xScale(Math.log(datum.y));
-            })
-            .attr('y', yScale(Math.log(backgroundCutoff))+15)
-            .attr('text-anchor', 'middle')
-            .text(function (datum) {
-                return datum.label;
-            });
-
-        var yTickData = [
-            { bq : Math.pow(10, 6), label : '1 MBq / GWe-year' },
-            { bq : backgroundSoilRadiation, label : 'Natural Soil' },
-            { bq : Math.pow(10, 9), label : '1 GBq / GWe-year' },
-            { bq : Math.pow(10, 15), label : '1 PBq / GWe-year' }
-        ];
-        var yTicks = svg.selectAll('rect.y-tick').data(yTickData);
-        yTicks.enter().append('rect')
-            .attr('class', 'y-tick')
-            .attr('y', function (datum) {
-                return Math.round(yScale(Math.log(datum.bq)));
-            })
-            .attr('x', xScale(0)-2)
-            .attr('width', 3)
-            .attr('height', 1);
-
-        var yTickLabels = svg.selectAll('text.y-tick-label').data(yTickData);
-        yTickLabels.enter().append('text')
-            .attr('class', 'y-tick-label')
-            .attr('y', function (datum) {
-                return yScale(Math.log(datum.bq))+4;
-            })
-            .attr('x', xScale(0)-5)
-            .attr('text-anchor', 'end')
-            .text(function (datum) {
-                return datum.label;
-            });
-    }
-});
-
-
-$(function () {
-
-    var reactorCollection = new DecayDemo.ReactorCollection(reactors);
-
-    new DecayDemo.ResultsView({
-        el         : $('.demo-graph'),
-        collection : reactorCollection
-    });
 });

@@ -210,29 +210,10 @@ footer {
 .demo-graph {
   position: relative;
   top: 10px;
-  left: 0px;
-  width: 100%;
+  left: -70px;
+  width: 120%;
   height: 350px;
   margin-bottom: 20px;
   font-family: Arial, sans-serif;
   font-size: 14px;
-}
-
-
-path {
-  stroke: #333;
-  stroke-width: 2px;
-  fill: none;
-}
-path.soil-background {
-  stroke: #999;
-  stroke-dasharray: 2 5;
-}
-rect.axis, rect.tick, rect.y-tick {
-  stroke: none;
-  fill: #89867b;
-}
-text.tick-label, text.y-tick-label {
-  font-size: 10px;
-  fill: #89867b;
 }
