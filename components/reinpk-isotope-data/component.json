@@ -1,0 +1,17 @@
+{
+  "name": "isotope-data",
+  "repo": "reinpk/isotope-data",
+  "description": "Data about many nuclear isotopes.",
+  "version": "0.0.1",
+  "keywords": [],
+  "dependencies": {
+    "reinpk/convert": "*"
+  },
+  "development": {
+    "component/underscore": "*"
+  },
+  "license": "MIT",
+  "scripts": [
+    "index.js"
+  ]
+}

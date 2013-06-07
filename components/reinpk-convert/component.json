@@ -1,0 +1,13 @@
+{
+  "name": "convert",
+  "repo": "reinpk/convert",
+  "description": "A component for converting and short-handing various units.",
+  "version": "0.0.1",
+  "keywords": [],
+  "dependencies": {},
+  "development": {},
+  "license": "MIT",
+  "scripts": [
+    "index.js"
+  ]
+}

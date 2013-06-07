@@ -1,0 +1,18 @@
+{
+  "name": "keys",
+  "repo": "matthewp/keys",
+  "description": "Cross-browser implementation of Object.keys.",
+  "version": "0.0.1",
+  "keywords": [
+    "object",
+    "object.keys",
+    "keys"
+  ],
+  "dependencies": {},
+  "development": {},
+  "scripts": [
+    "index.js"
+  ],
+  "main": "index.js",
+  "license": "MIT"
+}

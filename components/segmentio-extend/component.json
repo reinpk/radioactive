@@ -1,0 +1,13 @@
+{
+  "name": "extend",
+  "repo": "segmentio/extend",
+  "description": "Component: extend, just like in underscore.",
+  "version": "0.0.1",
+  "keywords": [],
+  "dependencies": {},
+  "development": {},
+  "license": "MIT",
+  "scripts": [
+    "index.js"
+  ]
+}

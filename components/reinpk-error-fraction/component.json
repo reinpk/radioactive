@@ -1,0 +1,16 @@
+{
+  "name": "error-fraction",
+  "repo": "reinpk/error-fraction",
+  "description": "Error fraction calculator",
+  "version": "0.0.1",
+  "license": "MIT",
+  "keywords": [
+    "error fraction",
+    "statistics"
+  ],
+  "dependencies": {},
+  "development": {},
+  "scripts": [
+    "index.js"
+  ]
+}

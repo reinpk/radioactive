@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Decay Worksheet</title>
+
+    <link rel="stylesheet" href="styles/styles.css">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <script src="scripts/libs/jquery.min.js"></script>
+    <script src="scripts/libs/underscore.min.js"></script>
+    <script src="scripts/libs/radioactive.min.js"></script>
+
+    <script src="scripts/decay-worksheet.js"></script>
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <a class="home" href="../radioactive-js/">&laquo; Intro to radioactive.js</a>
+        <h1>Radioactive Decay Worksheet</h1>
+        <p>A worksheet for simple radioactive decay calculations.</p>
+        <form>
+          <fieldset>
+            <label>Starting Isotope</label>
+            <input id="isotope-input" name="isotope" type="text" value="Th-227"/>
+            <label>Initial Mass</label>
+            <input id="mass-input" name="mass" type="text" value="1"/>
+            <label>(grams)</label>
+          </fieldset>
+        </form>
+        <br/>
+      </header>
+
+      <section>
+        <h3>Resulting Decay Products</h3>
+        <form>
+          <fieldset>
+            <label>After</label>
+            <input id="time-input" name="time" type="text" value="10"/>
+            <select id="time-unit-select">
+              <option>seconds</option>
+              <option>minutes</option>
+              <option>hours</option>
+              <option selected="selected">days</option>
+              <option>weeks</option>
+              <option>years</option>
+            </select>
+          </fieldset>
+        </form>
+        <table id="decay-products-table">
+          <thead>
+            <th>Isotope</th>
+            <th>Mass Remaining</th>
+            <th>Halflife</th>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <script id="decay-products-row-template" type="text/template">
+          <tr>
+            <td><%= isotope %></td>
+            <td><%= (mass * 1000).toPrecision(3) %> grams</td>
+            <td><%= halflife.toPrecision(3) %> <%= halflifeUnit %></td>
+          </tr>
+        </script>
+
+        <hr/>
+
+        <h3>Decay Products Time Series</h3>
+        <form>
+          <fieldset>
+            <label>Interval</label>
+            <input id="interval-input" name="interval" type="text" value="1"/>
+            <select id="interval-unit-select">
+              <option>seconds</option>
+              <option>minutes</option>
+              <option>hours</option>
+              <option selected="selected">days</option>
+              <option>weeks</option>
+              <option>years</option>
+            </select>
+            <input id="download-button" type="submit" value="Download CSV"/>
+          </fieldset>
+        </form>
+      </section>
+
+  </body>
+</html>

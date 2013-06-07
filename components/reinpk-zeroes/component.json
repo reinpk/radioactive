@@ -1,0 +1,17 @@
+{
+  "name": "zeroes",
+  "repo": "reinpk/zeroes",
+  "description": "Array zeroes utility",
+  "version": "0.0.1",
+  "license": "MIT",
+  "keywords": [
+    "array",
+    "zeroes",
+    "utility"
+  ],
+  "dependencies": {},
+  "development": {},
+  "scripts": [
+    "index.js"
+  ]
+}

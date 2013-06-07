@@ -1,0 +1,144 @@
+
+window.Worksheet = window.Worksheet || {};
+
+// Display decay products at a point in time
+window.Worksheet.displayDecayProducts = function (isotope, mass, time) {
+    // compute the decay products
+    var charge = {};
+    charge[isotope] = mass;
+    var products = radioactive.decay.mass(charge)(time);
+
+    // create the list template
+    var rowTemplate = _.template($('#decay-products-row-template').html());
+    var tbody = $('#decay-products-table').children('tbody');
+    tbody.html('');
+
+    // show all the decay product isotopes and masses
+    var names = _.keys(products);
+    products = _.map(names, function (name) {
+        var data = radioactive.isotopeData[name];
+        var halflife = data ? data.halflife : '';
+        halflife = window.Worksheet.getAppropriateTimeAndUnit(halflife);
+        return {
+            isotope  : name,
+            mass     : products[name],
+            halflife : halflife.time,
+            halflifeUnit : halflife.unit
+        };
+    });
+    _.each(products, function (product) {
+        if (product.isotope !== 'total')
+            tbody.append(rowTemplate(product));
+    });
+};
+
+// Generate a time series of decay products as a CSV
+window.Worksheet.downloadTimeSeries = function (isotope, mass, interval) {
+    // TODO
+};
+
+
+// Convert time and timeUnit into years
+window.Worksheet.convertTimeUnitsToYears = function (time, unit) {
+    if (unit === 'years')
+        return time;
+    else if (unit === 'weeks')
+        return (time * 7 / 365.25 );
+    else if (unit === 'days')
+        return (time / 365.25);
+    else if (unit === 'hours')
+        return (time / (365.25 * 24) );
+    else if (unit === 'minutes')
+        return (time / (365.25 * 24 * 60) );
+    else if (unit === 'seconds')
+        return (time / (365.25 * 24 * 60 * 60) );
+};
+
+// Get the appropriate unit from a timespan in years
+window.Worksheet.getAppropriateTimeAndUnit = function (years) {
+    if (years > 1)
+        return { time : years, unit : 'years' };
+
+    var weeks = years * 365.25 / 7 > 1;
+    if (weeks > 1)
+        return { time : weeks, unit : 'weeks' };
+
+    var days = years * 365.25;
+    if (days > 1)
+        return { time : days, unit : 'days' };
+
+    var hours = days * 24;
+    if (hours > 1)
+        return { time : hours, unit : 'hours' };
+
+    var minutes = hours * 60;
+    if (minutes > 1)
+        return { time : minutes, unit : 'minutes' };
+
+    var seconds = minutes * 60;
+    if (seconds > 1)
+        return { time : seconds, unit : 'seconds' };
+
+    var ms = seconds * 1000;
+    if (ms > 1)
+        return { time : ms, unit : 'milliseconds' };
+
+    var ns = ms * 1000000;
+    return { time : ns, unit : 'nanoseconds' };
+};
+
+
+// Set up the worksheet
+$(function () {
+    
+    // Grab all of our input elements
+    var isotopeInput = $('#isotope-input');
+    var massInput = $('#mass-input');
+
+    var timeInput = $('#time-input');
+    var timeUnitSelect = $('#time-unit-select');
+
+    var intervalInput = $('#interval-input');
+    var intervalUnitSelect = $('#interval-unit-select');
+    var downloadButton = $('#download-button');
+
+
+    // Listen on isotopeInput, massInput, timeInput and timeUnitSelect blur
+    // to display updated point-in-time decay products.
+    var updateDecayProducts = function () {
+        var isotope = isotopeInput.val();
+        var mass = parseFloat(massInput.val()) / 1000;
+
+        var time = parseFloat(timeInput.val());
+        var timeUnit = timeUnitSelect.val();
+
+        // Convert units on time to years
+        var years = window.Worksheet.convertTimeUnitsToYears(time, timeUnit);
+
+        // Update the decay products display
+        window.Worksheet.displayDecayProducts(isotope, mass, years);
+    };
+
+    isotopeInput.on('keyup', updateDecayProducts);
+    massInput.on('keyup', updateDecayProducts);
+    timeInput.on('keyup', updateDecayProducts);
+    timeUnitSelect.on('change', updateDecayProducts);
+
+
+    // Listen on download button to download the time series CSV
+    downloadButton.on('click', function () {
+        var isotope = isotopeInput.val();
+        var mass = parseFloat(massInput.val()) / 1000;
+
+        var interval = parseFloat(timeInput.val());
+        var intervalUnit = timeUnitSelect.val();
+
+        // Convert units on time to years
+        var years = window.Worksheet.convertTimeUnitsToYears(interval, intervalUnit);
+
+        // Generate and download the CSV
+        window.Worksheet.downloadTimeSeries(isotope, mass, years);
+    });
+
+    isotopeInput.keyup();
+});

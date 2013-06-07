@@ -1,8 +1,8 @@
 body {
-  padding:50px;
-  font:19px/1.5 Times, serif;
-  color:#69665b;
-  font-weight:300;
+  padding: 50px;
+  font: 19px/1.5 Arial, sans-serif;
+  color: #69665b;
+  font-weight: 300;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -216,4 +216,30 @@ footer {
   margin-bottom: 20px;
   font-family: Arial, sans-serif;
   font-size: 14px;
+}
+
+
+/** Worksheet **/
+fieldset {
+  border: none;
+  padding: 0;
+  font: 17px/1.5 Arial, sans-serif;
+  color: #69665b;
+}
+
+input, select {
+  font: 17px/1.5 Arial, sans-serif;
+  color: #69665b;
+}
+
+#isotope-input {
+  margin-right: 30px;
+}
+
+input[type="text"] {
+  width: 80px;
+}
+
+table {
+  font: 15px/1.5 Arial, sans-serif;
 }
