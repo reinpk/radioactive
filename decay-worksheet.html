@@ -29,7 +29,13 @@
             <input id="isotope-input" name="isotope" type="text" value="Th-227"/>
             <label>Initial Mass</label>
             <input id="mass-input" name="mass" type="text" value="1"/>
-            <label>(grams)</label>
+            <select id="mass-unit-select">
+              <option>picograms</option>
+              <option>micrograms</option>
+              <option>milligrams</option>
+              <option selected="selected">grams</option>
+              <option>kilograms</option>
+            </select>
           </fieldset>
         </form>
         <br/>
@@ -62,7 +68,13 @@
         <script id="decay-products-row-template" type="text/template">
           <tr>
             <td><%= isotope %></td>
-            <td><%= (mass * 1000).toPrecision(4) %> grams</td>
+            <td>
+              <% if (mass === 0 ) { %>
+                &mdash;
+              <% } else { %>
+                <%= mass.toPrecision(4) %> <%= massUnit %>
+              <% } %>
+            </td>
             <td><%= halflife.toPrecision(3) %> <%= halflifeUnit %></td>
           </tr>
         </script>

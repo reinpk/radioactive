@@ -19,9 +19,11 @@ window.Worksheet.displayDecayProducts = function (isotope, mass, time) {
         var data = radioactive.isotopeData[name];
         var halflife = data ? data.halflife : '';
         halflife = window.Worksheet.getAppropriateTimeAndUnit(halflife);
+        mass = window.Worksheet.getAppropriateMassAndUnit(products[name]);
         return {
             isotope  : name,
-            mass     : products[name],
+            mass     : mass.mass,
+            massUnit : mass.unit,
             halflife : halflife.time,
             halflifeUnit : halflife.unit
         };
@@ -117,6 +119,42 @@ window.Worksheet.getAppropriateTimeAndUnit = function (years) {
     return { time : ns, unit : 'nanoseconds' };
 };
 
+// Convert mass and massUnit to grams
+window.Worksheet.convertMassUnitsToGrams = function (mass, massUnit) {
+    if (massUnit === 'kilograms')
+        return mass*1000;
+    else if (massUnit === 'grams')
+        return mass;
+    else if (massUnit === 'milligrams')
+        return mass/1000;
+    else if (massUnit === 'micrograms')
+        return mass/1000000;
+    else if (massUnit === 'picograms')
+        return mass/1000000000000;
+};
+
+// Get the appropriate unite from a mass in grams
+window.Worksheet.getAppropriateMassAndUnit = function (grams) {
+
+    var kg = grams / 1000;
+    if (kg > 1)
+        return { mass : kg, unit : 'kilograms' };
+
+    if (grams > 1)
+        return { mass : grams, unit : 'grams' };
+
+    var mg = grams * 1000;
+    if (mg > 1)
+        return { mass : mg, unit : 'milligrams' };
+
+    var ug = mg * 1000;
+    if (ug > 1)
+        return { mass : ug, unit : 'micrograms' };
+
+    var pg = ug * 1000000;
+    return { mass : pg, unit : 'picograms' };
+};
+
 
 // Set up the worksheet
 $(function () {
@@ -124,6 +162,7 @@ $(function () {
     // Grab all of our input elements
     var isotopeInput = $('#isotope-input');
     var massInput = $('#mass-input');
+    var massUnitSelect = $('#mass-unit-select');
 
     var timeInput = $('#time-input');
     var timeUnitSelect = $('#time-unit-select');
@@ -137,7 +176,10 @@ $(function () {
     // to display updated point-in-time decay products.
     var updateDecayProducts = function () {
         var isotope = isotopeInput.val();
-        var mass = parseFloat(massInput.val()) / 1000;
+        var mass = parseFloat(massInput.val());
+        var massUnit = massUnitSelect.val();
+
+        var grams = window.Worksheet.convertMassUnitsToGrams(mass, massUnit);
 
         var time = parseFloat(timeInput.val());
         var timeUnit = timeUnitSelect.val();
@@ -146,11 +188,12 @@ $(function () {
         var years = window.Worksheet.convertTimeUnitsToYears(time, timeUnit);
 
         // Update the decay products display
-        window.Worksheet.displayDecayProducts(isotope, mass, years);
+        window.Worksheet.displayDecayProducts(isotope, grams, years);
     };
 
     isotopeInput.on('keyup', updateDecayProducts);
     massInput.on('keyup', updateDecayProducts);
+    massUnitSelect.on('change', updateDecayProducts);
     timeInput.on('keyup', updateDecayProducts);
     timeUnitSelect.on('change', updateDecayProducts);
 
@@ -161,7 +204,10 @@ $(function () {
         event.preventDefault();
 
         var isotope = isotopeInput.val();
-        var mass = parseFloat(massInput.val()) / 1000;
+        var mass = parseFloat(massInput.val());
+        var massUnit = massUnitSelect.val();
+
+        var grams = window.Worksheet.convertMassUnitsToGrams(mass, massUnit);
 
         var interval = parseFloat(intervalInput.val());
         var intervalUnit = intervalUnitSelect.val();
