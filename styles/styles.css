@@ -241,5 +241,6 @@ input[type="text"] {
 }
 
 table {
+  margin-top: 20px;
   font: 15px/1.5 Arial, sans-serif;
 }

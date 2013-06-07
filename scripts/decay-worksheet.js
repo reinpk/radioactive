@@ -34,7 +34,37 @@ window.Worksheet.displayDecayProducts = function (isotope, mass, time) {
 
 // Generate a time series of decay products as a CSV
 window.Worksheet.downloadTimeSeries = function (isotope, mass, interval) {
+    // generate the decay products function
+    var charge = {};
+    charge[isotope] = mass;
+    var products = radioactive.decay.mass(charge);
+
+    // Create the header row of the CSV
+    var csv = 'Years';
+    var chain = products(1);
+    _.each(_.keys(chain), function (isotope) {
+        if (isotope !== 'total')
+            csv += ','+isotope;
+    });
+
+    // Iterate on the interval to create the body of the CSV
+    for (var i = 1; i <= 1000; i++) {
+
+        var years = i * interval;
+
+        csv += '\n';
+        csv += years; // Years column
+
+        var productsAtInterval = products(years);
+        _.each(_.keys(productsAtInterval), function (isotope) {
+            if (isotope !== 'total')
+                csv += ','+productsAtInterval[isotope]*1000;
+        });
+    }
+
+    // Download the CSV
     // TODO
+    // console.log(csv);
 };
 
 
@@ -126,12 +156,15 @@ $(function () {
 
 
     // Listen on download button to download the time series CSV
-    downloadButton.on('click', function () {
+    downloadButton.on('click', function (event) {
+
+        event.preventDefault();
+
         var isotope = isotopeInput.val();
         var mass = parseFloat(massInput.val()) / 1000;
 
-        var interval = parseFloat(timeInput.val());
-        var intervalUnit = timeUnitSelect.val();
+        var interval = parseFloat(intervalInput.val());
+        var intervalUnit = intervalUnitSelect.val();
 
         // Convert units on time to years
         var years = window.Worksheet.convertTimeUnitsToYears(interval, intervalUnit);

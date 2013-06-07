@@ -62,12 +62,10 @@
         <script id="decay-products-row-template" type="text/template">
           <tr>
             <td><%= isotope %></td>
-            <td><%= (mass * 1000).toPrecision(3) %> grams</td>
+            <td><%= (mass * 1000).toPrecision(4) %> grams</td>
             <td><%= halflife.toPrecision(3) %> <%= halflifeUnit %></td>
           </tr>
         </script>
-
-        <hr/>
 
         <h3>Decay Products Time Series</h3>
         <form>
@@ -85,6 +83,7 @@
             <input id="download-button" type="submit" value="Download CSV"/>
           </fieldset>
         </form>
+        <small>The CSV will contain 1000 rows, representing 1000 intervals of your specified time interval.</small>
       </section>
 
   </body>
